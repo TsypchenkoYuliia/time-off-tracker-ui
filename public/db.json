@@ -1,0 +1,14 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "login": "admin@admin.com",
+      "password": "password",
+      "userInfo": {
+        "name": "admin",
+        "role": "admin",
+        "vacations": []
+      }
+    }
+  ]
+}
