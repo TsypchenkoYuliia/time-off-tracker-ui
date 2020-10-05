@@ -8,3 +8,28 @@ body {
   background-color: $background;
   padding: 0px;
 }
+
+.sidebar {
+  padding: 10px 0;
+  width: 170px;
+  min-width: 170px;
+  justify-content: center;
+  background-color: #f0f0f0;
+  height: 100%;
+}
+
+.filter {
+  flex-wrap: nowrap;
+}
+
+.statistics {
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.statistics__text {
+  flex: 1;
+  font-size: 16px;
+}

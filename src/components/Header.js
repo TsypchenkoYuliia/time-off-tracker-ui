@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { AppBar, Toolbar, Button, Avatar, Menu, MenuItem } from '@material-ui/core';
 
@@ -16,13 +16,19 @@ function Header({ user }) {
   };
 
   const handleLogout = () => {
-    setCurrentUser({});
+    localStorage.removeItem('name');
+    setCurrentUser('');
     history.push('/login');
   };
 
   const toHomePage = () => {
     history.push('/');
   };
+
+  //исправить обновление статуса пользователя
+  useEffect(() => {
+    console.log(localStorage.getItem('name'));
+  }, [currentUser]);
 
   return (
     <header>
@@ -31,10 +37,12 @@ function Header({ user }) {
           <h2 className="title" onClick={toHomePage}>
             Vacation
           </h2>
-          {currentUser.name ? (
+          {currentUser ? (
             <>
-              <Avatar src={currentUser.avatar} onClick={handleClickAvatar}>
-                {currentUser.name.substr(0, 2).toUpperCase()}
+              <Avatar
+                src="https://gagadget.com/media/post_big/The_Elder_Scrolls_V_Skyrim.jpg"
+                onClick={handleClickAvatar}>
+                {currentUser.substr(0, 2).toUpperCase()}
               </Avatar>
               <Menu
                 elevation={5}

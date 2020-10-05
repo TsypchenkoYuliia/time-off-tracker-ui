@@ -12,11 +12,7 @@ import * as serviceWorker from './serviceWorker';
 import './scss/app.scss';
 
 //only for external Header  user check
-const user = {
-  // name: 'Admin',
-  // avatar: null,
-  // role: 'admin',
-};
+const user = localStorage.getItem('name');
 
 ReactDOM.render(
   <React.StrictMode>
