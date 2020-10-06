@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Switch, Route, Link, useHistory } from 'react-router-dom';
 import { Button, ButtonGroup } from '@material-ui/core';
 
 import Home from './Home';
 import MyRequests from './MyRequests';
 import OtherRequests from './OtherRequests';
+import NewRequest from './NewRequest';
+
+import { Context } from '../Context';
 
 const routes = [
   {
@@ -25,23 +28,29 @@ const routes = [
     exact: true,
     main: () => <OtherRequests />,
   },
+  {
+    name: 'New Requests',
+    path: '/new_requests',
+    exact: true,
+    main: () => <NewRequest />,
+  },
 ];
 
 function User() {
   const [selectedRoute, setSelectedRoute] = useState(0);
-  const [currentUser, setCurrentUser] = useState(localStorage.getItem('name'));
+  const [context, setContext] = useContext(Context);
 
   let history = useHistory();
 
   useEffect(() => {
-    if (!localStorage.getItem('name')) {
+    if (!context) {
       history.push('/login');
     }
 
     setSelectedRoute(routes.findIndex((item) => item.path === history.location.pathname));
-  }, [history.location.pathname]);
+  }, [context, history.location.pathname]);
 
-  if (!localStorage.getItem('name')) {
+  if (!context) {
     history.push('/login');
   }
 

@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { TextField, Typography, Button, InputAdornment, IconButton } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
+
+import { Context } from '../Context';
 
 const emailRegex = RegExp(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/);
 
@@ -10,6 +12,8 @@ const MASTER_PASSWORD = 'admin123';
 
 function Login() {
   let history = useHistory();
+
+  const [context, setContext] = useContext(Context);
 
   const [email, setEmail] = useState(MASTER_EMAIL);
   const [password, setPassword] = useState(MASTER_PASSWORD);
@@ -41,6 +45,7 @@ function Login() {
     //тут будет запрос на проверку почты и пароля через аксиос
     if (email === MASTER_EMAIL && password === MASTER_PASSWORD) {
       localStorage.setItem('name', 'admin');
+      setContext('admin');
     }
   };
 
@@ -48,7 +53,7 @@ function Login() {
     setPasswordVisibility(!showPassword);
   };
 
-  if (localStorage.getItem('name')) history.replace('/');
+  if (context) history.replace('/');
 
   return (
     <div>

@@ -15,6 +15,7 @@ import {
   FormControl,
   InputLabel,
 } from '@material-ui/core';
+import { Switch, Route, Link, useHistory, withRouter } from 'react-router-dom';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import { SingleDatePicker, DateRangePicker } from 'react-dates';
@@ -59,26 +60,34 @@ const rows = [
 ];
 
 const states = ['Any', 'In progress', 'Approved', 'Rejected'];
-const types = ['Any', 'In progress', 'Approved', 'Rejected'];
+const types = [
+  'Any',
+  'Sick Leave',
+  'Administrative Leave',
+  'Sick leave (no documents)',
+  'Sick leave (with documents)',
+];
 
 class MyRequests extends Component {
   state = {
     fromDate: '',
     toDate: '',
-    requestState: 'Any',
-    requestType: 'Any',
+    requestState: '0',
+    requestType: '0',
     focusedTo: false,
     focusedFrom: false,
-    selectedDate: new Date('2014-08-18T21:11:54'),
+    isLoading: false,
   };
 
-  handleFromDateChange = (date) => {
-    this.setState({ selectedDate: date });
+  handleStateChange = (event) => {
+    this.setState({ requestState: event.target.value });
+  };
+
+  handleTypeChange = (event) => {
+    this.setState({ requestType: event.target.value });
   };
 
   render() {
-    const { selectedDate } = this.state;
-
     return (
       <div>
         <h2>Statistics {new Date().getFullYear()}</h2>
@@ -92,6 +101,7 @@ class MyRequests extends Component {
             <p>Sick leave (no document): 11 days used</p>
             <p>Sick leave (with documents): 0 days used</p>
           </div>
+
           <Button variant="contained" color="secondary" style={{ height: '40px' }}>
             New Request
           </Button>
@@ -114,23 +124,22 @@ class MyRequests extends Component {
             onDateChange={(toDate) => this.setState({ toDate })}
             focused={this.state.focusedTo}
             onFocusChange={({ focused }) => this.setState({ focusedTo: focused })}
-            id="toDate_sdpicker"
           />
 
           <FormControl style={{ marginRight: 50, width: 150 }}>
             <InputLabel>State</InputLabel>
-            <Select>
-              {states.map((state) => (
-                <MenuItem>{state}</MenuItem>
+            <Select value={this.state.requestState} onChange={this.handleStateChange}>
+              {states.map((state, idx) => (
+                <MenuItem value={idx}>{state}</MenuItem>
               ))}
             </Select>
           </FormControl>
 
           <FormControl style={{ marginRight: 50, width: 150 }}>
             <InputLabel>Type</InputLabel>
-            <Select>
-              {types.map((type) => (
-                <MenuItem>{type}</MenuItem>
+            <Select value={this.state.requestType} onChange={this.handleTypeChange}>
+              {types.map((type, idx) => (
+                <MenuItem value={idx}>{type}</MenuItem>
               ))}
             </Select>
           </FormControl>
