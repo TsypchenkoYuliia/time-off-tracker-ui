@@ -29,8 +29,8 @@ const routes = [
     main: () => <OtherRequests />,
   },
   {
-    name: 'New Requests',
-    path: '/new_requests',
+    name: 'New Request',
+    path: '/new_request',
     exact: true,
     main: () => <NewRequest />,
   },

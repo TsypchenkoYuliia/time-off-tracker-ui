@@ -135,7 +135,7 @@ class MyRequests extends Component {
             </Select>
           </FormControl>
 
-          <FormControl style={{ marginRight: 50, width: 150 }}>
+          <FormControl style={{ marginRight: 50, width: 230 }}>
             <InputLabel>Type</InputLabel>
             <Select value={this.state.requestType} onChange={this.handleTypeChange}>
               {types.map((type, idx) => (

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Switch, Route, Link, useHistory } from 'react-router-dom';
+import { withRouter } from 'react-router';
 import { withStyles, Button } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -82,7 +83,10 @@ class Home extends Component {
             <Button
               className="home__new-request"
               variant="contained"
-              style={{ height: '30px', width: '140px', minWidth: '140px' }}>
+              style={{ height: '30px', width: '140px', minWidth: '140px' }}
+              onClick={() => {
+                console.log(this.props.history.push('/new_request'));
+              }}>
               New request
             </Button>
           </div>
@@ -156,4 +160,4 @@ class Home extends Component {
   }
 }
 
-export default Home;
+export default withRouter(Home);
