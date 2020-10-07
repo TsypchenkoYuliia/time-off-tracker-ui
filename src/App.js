@@ -4,6 +4,7 @@ import { Switch, Route } from 'react-router-dom';
 import Header from './components/Header';
 import User from './pages/User';
 import Login from './pages/Login';
+import Admin from './pages/Admin';
 
 import { Context } from './Context';
 
@@ -15,10 +16,13 @@ function App() {
   return (
     <Context.Provider value={[context, setContext]}>
       <div>
-        <Header user={user} />
+        <Header />
         <Switch>
           <Route path="/login" exact>
             <Login />
+          </Route>
+          <Route path="/admin" exact>
+            <Admin />
           </Route>
           <Route path="/">
             <User />

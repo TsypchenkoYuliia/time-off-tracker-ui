@@ -10,6 +10,9 @@ const emailRegex = RegExp(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\
 const MASTER_EMAIL = 'admin@admin.com';
 const MASTER_PASSWORD = 'admin123';
 
+const USER_EMAIL = 'user@admin.com';
+const USER_PASSWORD = 'admin123';
+
 function Login() {
   let history = useHistory();
 
@@ -46,6 +49,11 @@ function Login() {
     if (email === MASTER_EMAIL && password === MASTER_PASSWORD) {
       localStorage.setItem('name', 'admin');
       setContext('admin');
+      history.push('/admin');
+    } else if (email === USER_EMAIL && password === USER_PASSWORD) {
+      localStorage.setItem('name', 'joe');
+      setContext('joe');
+      history.push('/');
     }
   };
 
@@ -53,7 +61,7 @@ function Login() {
     setPasswordVisibility(!showPassword);
   };
 
-  if (context) history.replace('/');
+  if (context) history.push('/');
 
   return (
     <div>

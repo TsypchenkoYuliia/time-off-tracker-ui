@@ -45,6 +45,12 @@ function User() {
   useEffect(() => {
     if (!context) {
       history.push('/login');
+      return;
+    }
+
+    if (context === 'admin') {
+      history.replace('/admin');
+      return;
     }
 
     setSelectedRoute(routes.findIndex((item) => item.path === history.location.pathname));

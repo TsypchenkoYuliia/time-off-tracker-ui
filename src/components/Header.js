@@ -4,7 +4,7 @@ import { AppBar, Toolbar, Button, Avatar, Menu, MenuItem } from '@material-ui/co
 
 import { Context } from '../Context';
 
-function Header({ user }) {
+function Header() {
   const [anchor, setAnchor] = useState(null);
 
   const [context, setContext] = useContext(Context);
