@@ -213,7 +213,7 @@ export default function EnhancedTable({ data, onDelete }) {
   const [orderBy, setOrderBy] = React.useState(null);
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState('5');
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [isEditing, setEditing] = React.useState(null);
   const [role, setRole] = React.useState(null);
 
@@ -327,7 +327,7 @@ export default function EnhancedTable({ data, onDelete }) {
                     </TableCell>
                     <TableCell align="center">{item.login}</TableCell>
                     <TableCell align="center">{item.email}</TableCell>
-                    {/* Строка выбора роли */}
+
                     <TableCell align="center">
                       {isEditing === item.id ? (
                         <FormControl>
@@ -348,7 +348,7 @@ export default function EnhancedTable({ data, onDelete }) {
                         item.role
                       )}
                     </TableCell>
-                    {/* Строка назначения выбора роли */}
+
                     <TableCell align="center">
                       {isEditing === item.id ? (
                         <div style={{ flexDirection: 'row' }}>
