@@ -73,6 +73,10 @@ function Admin() {
       .catch((error) => console.log(error));
   }, []);
 
+  const handleDelete = (array) => {
+    array.forEach((id) => axios.delete('http://localhost:3001/users/' + id));
+  };
+
   return (
     <div>
       <div style={{ flexDirection: 'row' }}>
@@ -84,7 +88,7 @@ function Admin() {
       <div style={{ padding: '0 20px' }}>
         {data ? (
           <>
-            <TableContainer>
+            {/* <TableContainer>
               <Table style={{ width: '900px', marginBottom: '10px' }}>
                 <TableHead>
                   <TableRow>
@@ -121,8 +125,14 @@ function Admin() {
                   })}
                 </TableBody>
               </Table>
-            </TableContainer>
-            <UsersTable data={data} />
+            </TableContainer> */}
+
+            <UsersTable
+              data={data}
+              onDelete={(arr) => {
+                handleDelete(arr);
+              }}
+            />
           </>
         ) : (
           <CircularProgress />

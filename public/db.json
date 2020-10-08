@@ -17,7 +17,7 @@
       "password": "password",
       "firstName": "Jane",
       "lastName": "Doe",
-      "role": "Employee",
+      "role": "Manager",
       "vacations": []
     },
     {
@@ -27,7 +27,7 @@
       "password": "password",
       "firstName": "Mark",
       "lastName": "Smith",
-      "role": "Manager",
+      "role": "Employee",
       "vacations": []
     },
     {

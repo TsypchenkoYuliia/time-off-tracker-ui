@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
+import { Button, Select, MenuItem, FormControl, InputLabel } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -22,6 +22,9 @@ import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import Confirmation from './ConfirmationDialog';
+import AddNewUserDialog from './AddNewUserDialog';
+import axios from 'axios';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -128,9 +131,14 @@ const useToolbarStyles = makeStyles((theme) => ({
   },
 }));
 
-const EnhancedTableToolbar = (props) => {
+const EnhancedTableToolbar = ({ numSelected, onDelete }) => {
   const classes = useToolbarStyles();
-  const { numSelected } = props;
+  const [open, setOpen] = React.useState(false);
+  const [openNewUser, setOpenNewUser] = React.useState(false);
+
+  const handleOpenDialog = () => {
+    setOpen(true);
+  };
 
   return (
     <Toolbar
@@ -144,17 +152,28 @@ const EnhancedTableToolbar = (props) => {
       )}
 
       {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton aria-label="delete">
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
+        <>
+          <Tooltip title="Delete">
+            <IconButton aria-label="delete" onClick={handleOpenDialog}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+          <Confirmation isOpen={open} onClose={() => setOpen(false)} onDelete={onDelete} />
+        </>
       ) : (
-        <Tooltip title="Add new user">
-          <IconButton className="new_user-btn" aria-label="add new user">
-            <PersonAddIcon />
-          </IconButton>
-        </Tooltip>
+        <>
+          <Tooltip title="Add new user">
+            <IconButton
+              className="new_user-btn"
+              aria-label="add new user"
+              onClick={() => {
+                setOpenNewUser(true);
+              }}>
+              <PersonAddIcon />
+            </IconButton>
+          </Tooltip>
+          <AddNewUserDialog isOpen={openNewUser} onClose={() => setOpenNewUser(false)} />
+        </>
       )}
     </Toolbar>
   );
@@ -188,13 +207,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function EnhancedTable({ data }) {
+export default function EnhancedTable({ data, onDelete }) {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState(null);
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState('5');
+  const [isEditing, setEditing] = React.useState(null);
+  const [role, setRole] = React.useState(null);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -257,6 +278,8 @@ export default function EnhancedTable({ data }) {
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
+  const roles = ['Employee', 'Manager'];
+
   return (
     <div className={classes.root}>
       <EnhancedTableToolbar numSelected={selected.length} />
@@ -266,11 +289,11 @@ export default function EnhancedTable({ data }) {
           className={classes.table}
           aria-labelledby="tableTitle"
           size={'medium'}
-          // size={dense ? 'small' : 'medium'}
           aria-label="enhanced table">
           <EnhancedTableHead
             classes={classes}
             numSelected={selected.length}
+            onDelete={() => {}}
             order={order}
             orderBy={orderBy}
             onSelectAllClick={handleSelectAllClick}
@@ -304,22 +327,70 @@ export default function EnhancedTable({ data }) {
                     </TableCell>
                     <TableCell align="center">{item.login}</TableCell>
                     <TableCell align="center">{item.email}</TableCell>
-                    <TableCell align="center">{item.role}</TableCell>
+                    {/* Строка выбора роли */}
                     <TableCell align="center">
-                      <Button
-                        variant="contained"
-                        onClick={() => {
-                          console.log('Hi');
-                        }}>
-                        Edit
-                      </Button>
+                      {isEditing === item.id ? (
+                        <FormControl>
+                          <InputLabel>Role</InputLabel>
+                          <Select
+                            value={role}
+                            onChange={(event) => {
+                              setRole(event.target.value);
+                            }}>
+                            {roles.map((obj, idx) => (
+                              <MenuItem key={`key-${idx}-name${obj}`} value={idx}>
+                                {obj}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      ) : (
+                        item.role
+                      )}
+                    </TableCell>
+                    {/* Строка назначения выбора роли */}
+                    <TableCell align="center">
+                      {isEditing === item.id ? (
+                        <div style={{ flexDirection: 'row' }}>
+                          <Button
+                            variant="contained"
+                            style={{ marginRight: 10 }}
+                            onClick={() => {
+                              if (role == roles.indexOf(item.role)) {
+                                setEditing(null);
+                                return;
+                              }
+
+                              axios.patch('http://localhost:3001/users/' + item.id, {
+                                role: role === 0 ? 'Employee' : 'Manager',
+                              });
+                            }}>
+                            Ok
+                          </Button>
+                          <Button
+                            variant="contained"
+                            onClick={() => {
+                              setEditing(null);
+                            }}>
+                            Cancel
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button
+                          variant="contained"
+                          onClick={() => {
+                            setEditing(item.id);
+                            setRole(item.role === 'Employee' ? 0 : 1);
+                          }}>
+                          Edit
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 );
               })}
             {emptyRows > 0 && (
               <TableRow style={{ height: 33 * emptyRows }}>
-                {/* (dense ? 33 : 53) */}
                 <TableCell colSpan={6} />
               </TableRow>
             )}
@@ -335,10 +406,6 @@ export default function EnhancedTable({ data }) {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </TableContainer>
-      {/* <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
-      /> */}
     </div>
   );
 }
