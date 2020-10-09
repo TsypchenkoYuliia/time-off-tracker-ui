@@ -45,6 +45,14 @@ function Login() {
 
     setErrors(error);
 
+    if (
+      Object.values(error).reduce((sum, err) => {
+        return sum + err.length;
+      }, 0) > 0
+    ) {
+      return;
+    }
+
     //тут будет запрос на проверку почты и пароля через аксиос
     if (email === MASTER_EMAIL && password === MASTER_PASSWORD) {
       localStorage.setItem('name', 'admin');

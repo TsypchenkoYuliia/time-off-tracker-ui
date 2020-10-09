@@ -9,6 +9,11 @@ body {
   padding: 0px;
 }
 
+.button {
+  border-radius: 0;
+  text-align: center;
+}
+
 .sidebar {
   padding: 10px 0;
   width: 170px;
@@ -32,4 +37,16 @@ body {
 .statistics__text {
   flex: 1;
   font-size: 16px;
+}
+
+.MuiInputBase-root {
+  font-family: 'Proxima Nova';
+  font-weight: normal;
+  font-style: normal;
+}
+
+.MuiFormLabel-root {
+  font-family: 'Proxima Nova';
+  font-weight: normal;
+  font-style: normal;
 }

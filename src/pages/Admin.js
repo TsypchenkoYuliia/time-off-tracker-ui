@@ -1,12 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import { withStyles, Button } from '@material-ui/core';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
+import { TextField, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from 'axios';
 
@@ -15,42 +9,11 @@ import UsersTable from '../components/Admin/UsersTable';
 
 const uri = 'http://localhost:3001/users';
 
-const StyledTableCell = withStyles((theme) => ({
-  head: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
-  },
-  body: {
-    fontSize: 14,
-    '&:not(:last-child)': {
-      borderRightWidth: '1px',
-      borderRightColor: 'lightgray',
-      borderRightStyle: 'solid',
-    },
-    '&:last-child': {
-      borderRightWidth: '1px',
-      borderRightColor: 'lightgray',
-      borderRightStyle: 'solid',
-    },
-    '&:first-child': {
-      borderLeftWidth: '1px',
-      borderLeftColor: 'lightgray',
-      borderLeftStyle: 'solid',
-    },
-  },
-}))(TableCell);
-
-const StyledTableRow = withStyles((theme) => ({
-  root: {
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.action.white,
-    },
-  },
-}))(TableRow);
-
 function Admin() {
   const [isLoading, setLoading] = useState(false);
   const [data, setData] = useState(null);
+  const [filter, setFilter] = useState(null);
+  const [role, setRole] = useState(-1);
   const [context, setContext] = useContext(Context);
   let history = useHistory();
 
@@ -77,63 +40,61 @@ function Admin() {
     array.forEach((id) => axios.delete('http://localhost:3001/users/' + id));
   };
 
+  //Roles upload from db
+  // useEffect(() => {
+  //  axios.get(uri+'/role').then(({data}) => setRoles(data))
+  // }, [])
+
+  const handleFilterName = () => {
+    const filteredData = filter
+      ? data.filter(
+          (item) =>
+            item.firstName.toLowerCase().includes(filter.toLowerCase()) ||
+            item.lastName.toLowerCase().includes(filter.toLowerCase()),
+        )
+      : data;
+
+    return role === -1 ? filteredData : filteredData.filter((item) => item.role === roles[role]);
+  };
+
+  const roles = ['Employee', 'Manager'];
+
   return (
     <div>
-      <div style={{ flexDirection: 'row' }}>
-        <p>There will be name filter</p>
-        <p>There will be Role filter</p>
-        <p>About button I don't know</p>
+      <div style={{ flexDirection: 'row', padding: '10px', marginTop: '10px' }}>
+        <TextField
+          label="Filter by Name"
+          variant="standard"
+          className="admin__form-input"
+          onChange={(e) => setFilter(e.target.value)}
+          style={{ marginBottom: 20, width: 300 }}
+        />
+        <FormControl className="admin__filter-role">
+          <InputLabel>Filter by Role</InputLabel>
+          <Select
+            value={role}
+            onChange={(event) => {
+              setRole(event.target.value);
+            }}>
+            <MenuItem value={-1}>Any</MenuItem>
+            {roles.map((obj, idx) => (
+              <MenuItem key={`key-${idx}-name${obj}`} value={idx}>
+                {obj}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </div>
 
       <div style={{ padding: '0 20px' }}>
         {data ? (
-          <>
-            {/* <TableContainer>
-              <Table style={{ width: '900px', marginBottom: '10px' }}>
-                <TableHead>
-                  <TableRow>
-                    <StyledTableCell style={{ minWidth: '110px', width: '120px' }} align="center">
-                      Name
-                    </StyledTableCell>
-                    <StyledTableCell style={{ width: '180px' }} align="center">
-                      Login
-                    </StyledTableCell>
-                    <StyledTableCell style={{ width: '200px' }} align="center">
-                      Email
-                    </StyledTableCell>
-                    <StyledTableCell style={{ width: '200px' }} align="center">
-                      Role
-                    </StyledTableCell>
-                    <StyledTableCell style={{ width: '200px' }} align="center"></StyledTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {data.map((item) => {
-                    return (
-                      <StyledTableRow key={item.id}>
-                        <StyledTableCell component="th" scope="row">
-                          {item.firstName + ' ' + item.lastName}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">{item.login}</StyledTableCell>
-                        <StyledTableCell align="center">{item.email}</StyledTableCell>
-                        <StyledTableCell align="center">{item.role}</StyledTableCell>
-                        <StyledTableCell align="center">
-                          <Button variant="contained">Edit</Button>
-                        </StyledTableCell>
-                      </StyledTableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer> */}
-
-            <UsersTable
-              data={data}
-              onDelete={(arr) => {
-                handleDelete(arr);
-              }}
-            />
-          </>
+          <UsersTable
+            data={handleFilterName()}
+            roles={roles}
+            onDelete={(arr) => {
+              handleDelete(arr);
+            }}
+          />
         ) : (
           <CircularProgress />
         )}
@@ -142,4 +103,4 @@ function Admin() {
   );
 }
 
-export default Admin;
+export default React.memo(Admin);

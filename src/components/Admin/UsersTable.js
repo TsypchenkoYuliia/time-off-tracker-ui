@@ -2,26 +2,26 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
-import { Button, Select, MenuItem, FormControl, InputLabel } from '@material-ui/core';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
+import {
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TableSortLabel,
+  Toolbar,
+  Tooltip,
+} from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
-import FilterListIcon from '@material-ui/icons/FilterList';
 import Confirmation from './ConfirmationDialog';
 import AddNewUserDialog from './AddNewUserDialog';
 import axios from 'axios';
@@ -69,14 +69,7 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{ 'aria-label': 'select all desserts' }}
-          />
-        </TableCell>
+        <TableCell padding="checkbox"></TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -131,50 +124,34 @@ const useToolbarStyles = makeStyles((theme) => ({
   },
 }));
 
-const EnhancedTableToolbar = ({ numSelected, onDelete }) => {
+const EnhancedTableToolbar = ({ numSelected, roles }) => {
   const classes = useToolbarStyles();
-  const [open, setOpen] = React.useState(false);
   const [openNewUser, setOpenNewUser] = React.useState(false);
-
-  const handleOpenDialog = () => {
-    setOpen(true);
-  };
 
   return (
     <Toolbar
       className={clsx(classes.root, {
         [classes.highlight]: numSelected > 0,
       })}>
-      {numSelected > 0 ? (
-        <h3 className="users-table__title">{numSelected} selected</h3>
-      ) : (
-        <h2 className="users-table__title">List of users</h2>
-      )}
+      <h2 className="users-table__title">List of users</h2>
 
-      {numSelected > 0 ? (
-        <>
-          <Tooltip title="Delete">
-            <IconButton aria-label="delete" onClick={handleOpenDialog}>
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-          <Confirmation isOpen={open} onClose={() => setOpen(false)} onDelete={onDelete} />
-        </>
-      ) : (
-        <>
-          <Tooltip title="Add new user">
-            <IconButton
-              className="new_user-btn"
-              aria-label="add new user"
-              onClick={() => {
-                setOpenNewUser(true);
-              }}>
-              <PersonAddIcon />
-            </IconButton>
-          </Tooltip>
-          <AddNewUserDialog isOpen={openNewUser} onClose={() => setOpenNewUser(false)} />
-        </>
-      )}
+      <>
+        <Tooltip title="Add new user">
+          <IconButton
+            className="new_user-btn"
+            aria-label="add new user"
+            onClick={() => {
+              setOpenNewUser(true);
+            }}>
+            <PersonAddIcon />
+          </IconButton>
+        </Tooltip>
+        <AddNewUserDialog
+          isOpen={openNewUser}
+          onClose={() => setOpenNewUser(false)}
+          roles={roles}
+        />
+      </>
     </Toolbar>
   );
 };
@@ -185,14 +162,11 @@ EnhancedTableToolbar.propTypes = {
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: '900px',
-  },
-  paper: {
     width: '100%',
-    marginBottom: theme.spacing(2),
+    //margin: '0 auto',
   },
   table: {
-    width: 900,
+    width: '100%',
   },
   visuallyHidden: {
     border: 0,
@@ -207,49 +181,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function EnhancedTable({ data, onDelete }) {
+export default function EnhancedTable({ data, roles }) {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState(null);
-  const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [isEditing, setEditing] = React.useState(null);
   const [role, setRole] = React.useState(null);
+  const [open, setOpen] = React.useState(false);
+  const [deletableUser, setDeletableUser] = React.useState(null);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
-  };
-
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = data.map((n) => n.id);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
-
-    setSelected(newSelected);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -274,15 +220,26 @@ export default function EnhancedTable({ data, onDelete }) {
     }
   };
 
-  const isSelected = (id) => selected.indexOf(id) !== -1;
-
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
-  const roles = ['Employee', 'Manager'];
+  const handleDelete = (id) => {
+    axios.delete('http://localhost:3001/users/' + id).then(() => setOpen(false));
+  };
+
+  const handleChangeRole = (id, pos) => {
+    if (role === roles.indexOf(pos)) {
+      setEditing(null);
+      return;
+    }
+
+    axios.patch('http://localhost:3001/users/' + id, {
+      role: roles[role],
+    });
+  };
 
   return (
     <div className={classes.root}>
-      <EnhancedTableToolbar numSelected={selected.length} />
+      <EnhancedTableToolbar roles={roles} />
 
       <TableContainer>
         <Table
@@ -292,11 +249,8 @@ export default function EnhancedTable({ data, onDelete }) {
           aria-label="enhanced table">
           <EnhancedTableHead
             classes={classes}
-            numSelected={selected.length}
-            onDelete={() => {}}
             order={order}
             orderBy={orderBy}
-            onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
             rowCount={data.length}
           />
@@ -304,23 +258,27 @@ export default function EnhancedTable({ data, onDelete }) {
             {stableSort(data, getComparator(order, orderBy))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((item, index) => {
-                const isItemSelected = isSelected(item.id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
                   <TableRow
+                    className="admin__users-table-row"
                     hover
                     role="checkbox"
-                    aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={item.id}
-                    selected={isItemSelected}>
+                    key={item.id}>
                     <TableCell padding="checkbox">
-                      <Checkbox
-                        onClick={(event) => handleClick(event, item.id)}
-                        checked={isItemSelected}
-                        inputProps={{ 'aria-labelledby': labelId }}
-                      />
+                      <Tooltip title="Delete">
+                        <IconButton
+                          className="delete-icon"
+                          aria-label="delete"
+                          onClick={() => {
+                            setDeletableUser([item.id, item.firstName.concat(' ', item.lastName)]);
+                            setOpen(true);
+                          }}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                     <TableCell component="th" id={labelId} scope="row" padding="none">
                       {item.firstName.concat(' ', item.lastName)}
@@ -353,21 +311,16 @@ export default function EnhancedTable({ data, onDelete }) {
                       {isEditing === item.id ? (
                         <div style={{ flexDirection: 'row' }}>
                           <Button
+                            className="users-table__ok-btn"
                             variant="contained"
                             style={{ marginRight: 10 }}
                             onClick={() => {
-                              if (role == roles.indexOf(item.role)) {
-                                setEditing(null);
-                                return;
-                              }
-
-                              axios.patch('http://localhost:3001/users/' + item.id, {
-                                role: role === 0 ? 'Employee' : 'Manager',
-                              });
+                              handleChangeRole(item.id, item.role);
                             }}>
                             Ok
                           </Button>
                           <Button
+                            className="users-table__cancel-btn"
                             variant="contained"
                             onClick={() => {
                               setEditing(null);
@@ -406,6 +359,12 @@ export default function EnhancedTable({ data, onDelete }) {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </TableContainer>
+      <Confirmation
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        onDelete={handleDelete}
+        user={deletableUser}
+      />
     </div>
   );
 }

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {
-  Typography,
   Button,
   withStyles,
   Table,
@@ -15,7 +14,7 @@ import {
   FormControl,
   InputLabel,
 } from '@material-ui/core';
-import { Switch, Route, Link, useHistory, withRouter } from 'react-router-dom';
+import { useHistory, withRouter } from 'react-router-dom';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import { SingleDatePicker, DateRangePicker } from 'react-dates';
@@ -196,9 +195,5 @@ class MyRequests extends Component {
     );
   }
 }
-
-const defaultProps = {
-  stateDateWrapper: (date) => date,
-};
 
 export default MyRequests;

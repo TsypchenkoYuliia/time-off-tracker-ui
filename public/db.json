@@ -17,7 +17,7 @@
       "password": "password",
       "firstName": "Jane",
       "lastName": "Doe",
-      "role": "Manager",
+      "role": "Employee",
       "vacations": []
     },
     {
@@ -27,7 +27,7 @@
       "password": "password",
       "firstName": "Mark",
       "lastName": "Smith",
-      "role": "Employee",
+      "role": "Manager",
       "vacations": []
     },
     {
@@ -123,49 +123,9 @@
     {
       "id": 13,
       "login": "nill.smith@admin.com",
-      "email": "nill.smith@admin.com",
+      "email": "bill.smith@admin.com",
       "password": "password",
       "firstName": "Nill",
-      "lastName": "Smith",
-      "role": "Manager",
-      "vacations": []
-    },
-    {
-      "id": 14,
-      "login": "gill.smith@admin.com",
-      "email": "gill.smith@admin.com",
-      "password": "password",
-      "firstName": "Gill",
-      "lastName": "Smith",
-      "role": "Manager",
-      "vacations": []
-    },
-    {
-      "id": 15,
-      "login": "Sill.smith@admin.com",
-      "email": "sill.smith@admin.com",
-      "password": "password",
-      "firstName": "Sill",
-      "lastName": "Smith",
-      "role": "Manager",
-      "vacations": []
-    },
-    {
-      "id": 16,
-      "login": "Vill.smith@admin.com",
-      "email": "vill.smith@admin.com",
-      "password": "password",
-      "firstName": "Vill",
-      "lastName": "Smith",
-      "role": "Manager",
-      "vacations": []
-    },
-    {
-      "id": 17,
-      "login": "Qill.smith@admin.com",
-      "email": "qill.smith@admin.com",
-      "password": "password",
-      "firstName": "Qill",
       "lastName": "Smith",
       "role": "Manager",
       "vacations": []
