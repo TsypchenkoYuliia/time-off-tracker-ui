@@ -17,7 +17,7 @@
       "password": "password",
       "firstName": "Jane",
       "lastName": "Doe",
-      "role": "Employee",
+      "role": "Manager",
       "vacations": []
     },
     {

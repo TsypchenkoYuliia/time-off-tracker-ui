@@ -22,9 +22,9 @@ import {
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
-import Confirmation from './ConfirmationDialog';
+import ConfirmationDialog from './ConfirmationDialog';
 import AddNewUserDialog from './AddNewUserDialog';
-import axios from 'axios';
+import { DeleteUser, ChangeUserRole } from '../Axios';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -223,7 +223,7 @@ export default function EnhancedTable({ data, roles }) {
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
   const handleDelete = (id) => {
-    axios.delete('http://localhost:3001/users/' + id).then(() => setOpen(false));
+    DeleteUser(id).then(() => setOpen(false));
   };
 
   const handleChangeRole = (id, pos) => {
@@ -232,9 +232,7 @@ export default function EnhancedTable({ data, roles }) {
       return;
     }
 
-    axios.patch('http://localhost:3001/users/' + id, {
-      role: roles[role],
-    });
+    ChangeUserRole(id, roles[role]);
   };
 
   return (
@@ -359,7 +357,7 @@ export default function EnhancedTable({ data, roles }) {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </TableContainer>
-      <Confirmation
+      <ConfirmationDialog
         isOpen={open}
         onClose={() => setOpen(false)}
         onDelete={handleDelete}

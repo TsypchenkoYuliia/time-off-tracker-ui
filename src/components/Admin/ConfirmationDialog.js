@@ -5,7 +5,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-export default function AlertDialog({ isOpen, onClose, onDelete, user }) {
+export default function ConfirmationDialog({ isOpen, onClose, onDelete, user }) {
   return (
     <div>
       <Dialog open={isOpen} onClose={onClose} aria-labelledby="alert-dialog-title">
