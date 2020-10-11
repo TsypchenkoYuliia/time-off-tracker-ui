@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { AppBar, Toolbar, Button, Avatar, Menu, MenuItem } from '@material-ui/core';
 
-function Header({ user }) {
+import { Context } from '../Context';
+
+function Header() {
   const [anchor, setAnchor] = useState(null);
-  const [currentUser, setCurrentUser] = useState(user);
+
+  const [context, setContext] = useContext(Context);
+
   let history = useHistory();
 
   const handleClickAvatar = (event) => {
@@ -16,7 +20,8 @@ function Header({ user }) {
   };
 
   const handleLogout = () => {
-    setCurrentUser({});
+    localStorage.removeItem('name');
+    setContext(localStorage.getItem('name'));
     history.push('/login');
   };
 
@@ -24,6 +29,11 @@ function Header({ user }) {
     history.push('/');
   };
 
+  useEffect(() => {
+    console.log(localStorage.getItem('name'));
+  }, [context]);
+
+  //пофиксить появление меню...может стрикт мод?
   return (
     <header>
       <AppBar position="static">
@@ -31,10 +41,12 @@ function Header({ user }) {
           <h2 className="title" onClick={toHomePage}>
             Vacation
           </h2>
-          {currentUser.name ? (
+          {context ? (
             <>
-              <Avatar src={currentUser.avatar} onClick={handleClickAvatar}>
-                {currentUser.name.substr(0, 2).toUpperCase()}
+              <Avatar
+                src="https://gagadget.com/media/post_big/The_Elder_Scrolls_V_Skyrim.jpg"
+                onClick={handleClickAvatar}>
+                {context.substr(0, 2).toUpperCase()}
               </Avatar>
               <Menu
                 elevation={5}
