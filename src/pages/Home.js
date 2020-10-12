@@ -10,6 +10,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import NewRequest from './NewRequest';
 import axios from 'axios';
 
 const StyledTableCell = withStyles((theme) => ({
@@ -55,6 +56,7 @@ class Home extends Component {
     isLoading: false,
     dataMyRequests: null,
     dataForApproval: null,
+    isNewRequestOpen: false,
   };
 
   componentDidMount() {
@@ -85,7 +87,7 @@ class Home extends Component {
               variant="contained"
               style={{ height: '30px', width: '140px', minWidth: '140px' }}
               onClick={() => {
-                console.log(this.props.history.push('/new_request'));
+                this.setState({ isNewRequestOpen: true });
               }}>
               New request
             </Button>
@@ -155,6 +157,12 @@ class Home extends Component {
             </Table>
           </TableContainer>
         </div>
+        <NewRequest
+          isOpen={this.state.isNewRequestOpen}
+          onClose={() => {
+            this.setState({ isNewRequestOpen: false });
+          }}
+        />
       </div>
     );
   }

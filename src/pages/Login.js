@@ -18,8 +18,8 @@ function Login() {
 
   const [context, setContext] = useContext(Context);
 
-  const [email, setEmail] = useState(MASTER_EMAIL);
-  const [password, setPassword] = useState(MASTER_PASSWORD);
+  const [email, setEmail] = useState(USER_EMAIL);
+  const [password, setPassword] = useState(USER_PASSWORD);
   const [showPassword, setPasswordVisibility] = useState(false);
   const [errors, setErrors] = useState({
     email: '',

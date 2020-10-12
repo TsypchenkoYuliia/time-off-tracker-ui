@@ -33,7 +33,7 @@ function Header() {
     console.log(localStorage.getItem('name'));
   }, [context]);
 
-  //пофиксить появление меню...может стрикт мод?
+  //пофиксить появление меню...?
   return (
     <header>
       <AppBar position="static">
