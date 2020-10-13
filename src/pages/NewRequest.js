@@ -3,15 +3,26 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { TextField, Button, Select, MenuItem, FormControl, InputLabel } from '@material-ui/core';
+import {
+  TextField,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Tooltip,
+  IconButton,
+  Input,
+} from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
-import moment from 'moment';
 import { SingleDatePicker } from 'react-dates';
+import axios from 'axios';
 
 const leaves = [
   'Paid leave',
-  'Administrative Leave',
+  'Administrative leave',
   'Administrative force majeure leave',
   'Study leave',
   'Social leave',
@@ -20,7 +31,16 @@ const leaves = [
 ];
 
 const roles = ['BA lead', 'QA', 'Junior'];
-const parts = ['Full', 'Fullest'];
+const parts = ['Full', 'Fullest', 'Distance'];
+
+const am = ['Anna Marie', 'John Smith', 'Bill Anderson', 'Nill Armstrong', 'Susane Incredible'];
+const pm = [
+  'Anney Kirillova',
+  'Bill Ivanov',
+  'Reygar Smith',
+  'Kirill Retushev',
+  'Yevheniy Enderov',
+];
 
 function NewRequest({ isOpen, onClose }) {
   const [leaveType, setLeaveType] = useState(0);
@@ -31,9 +51,30 @@ function NewRequest({ isOpen, onClose }) {
   const [focusedFrom, setFocusFrom] = useState(false);
   const [focusedTo, setFocusTo] = useState(false);
   const [toDate, setToDate] = useState(null);
+  const [amanager, setAManager] = useState([]);
+  const [pmanager, setPManager] = useState([]);
+  const [isSendingRequest, setRequestSending] = useState(false);
 
-  const dateDifference = moment.duration(moment(toDate).diff(moment(fromDate))).days();
   const getDateDifference = Math.round(toDate - fromDate) / (1000 * 60 * 60 * 24);
+
+  const handleSendRequest = async () => {
+    setRequestSending(true);
+    await axios
+      .post('https://url')
+      .then((data) => {})
+      .catch((err) => {});
+    setRequestSending(false);
+  };
+
+  useEffect(() => {
+    async function getAllData() {
+      //await axios.get(url).then({data}=>) //axios request for all managers
+      //axios request for all roles
+      //axios request for all parts
+      //axios request for all pm
+    }
+    getAllData();
+  }, []);
 
   return (
     <div>
@@ -45,8 +86,10 @@ function NewRequest({ isOpen, onClose }) {
         aria-labelledby="new-request-title"
         aria-describedby="new-request-description">
         <DialogTitle id="new-request-title">New Request</DialogTitle>
-        <DialogContent>
-          <FormControl style={{ marginRight: 20, marginBottom: 20, width: '100%' }}>
+        <DialogContent className="leave">
+          <FormControl
+            disabled={isSendingRequest}
+            style={{ marginRight: 20, marginBottom: 20, width: '100%' }}>
             <InputLabel>Leave Type</InputLabel>
             <Select
               value={leaveType}
@@ -67,6 +110,7 @@ function NewRequest({ isOpen, onClose }) {
               alignItems: 'center',
             }}>
             <SingleDatePicker
+              disabled={isSendingRequest}
               showClearDate
               placeholder="From"
               //transitionDuration={5000} WTF!
@@ -79,6 +123,7 @@ function NewRequest({ isOpen, onClose }) {
             />
 
             <SingleDatePicker
+              disabled={isSendingRequest}
               showClearDate
               placeholder="To"
               //transitionDuration={5} WTF!
@@ -102,10 +147,9 @@ function NewRequest({ isOpen, onClose }) {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              minWidth: '500px',
-              minHeight: '500px',
             }}>
             <TextField
+              disabled={isSendingRequest}
               label="Comment"
               variant="standard"
               fullWidth
@@ -118,8 +162,8 @@ function NewRequest({ isOpen, onClose }) {
               style={{ marginBottom: 20, width: '100%' }}
             />
 
-            <FormControl style={{ marginBottom: 20, width: '100%' }}>
-              <InputLabel>Role</InputLabel>
+            <FormControl disabled={isSendingRequest} style={{ marginBottom: 20, width: '100%' }}>
+              <InputLabel>Project Role</InputLabel>
               <Select
                 value={role}
                 onChange={(e) => {
@@ -131,7 +175,7 @@ function NewRequest({ isOpen, onClose }) {
               </Select>
             </FormControl>
 
-            <FormControl style={{ marginBottom: 20, width: '100%' }}>
+            <FormControl disabled={isSendingRequest} style={{ marginBottom: 20, width: '100%' }}>
               <InputLabel>Project participation</InputLabel>
               <Select
                 value={part}
@@ -144,12 +188,97 @@ function NewRequest({ isOpen, onClose }) {
               </Select>
             </FormControl>
           </div>
+
+          <div>
+            <h3>Approvers</h3>
+            <ol className="approvers__list">
+              <li>Accounting</li>
+              <li>
+                <FormControl disabled={isSendingRequest} className="approvers__item-form">
+                  <InputLabel id="am-label">AM</InputLabel>
+                  <Select
+                    labelId="am-label"
+                    multiple
+                    value={amanager}
+                    onChange={(e) => {
+                      setAManager(e.target.value);
+                    }}
+                    input={<Input />}
+                    //MenuProps={MenuProps}
+                  >
+                    {am.map((name) => (
+                      <MenuItem
+                        key={name}
+                        value={name}
+                        style={{ fontWeight: amanager.indexOf(name) === -1 ? '400' : '600' }}>
+                        {name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                {amanager.length > 0 && (
+                  <Tooltip title="clear">
+                    <IconButton
+                      disabled={isSendingRequest}
+                      className="clear-icon"
+                      onClick={() => setAManager([])}>
+                      <CloseIcon />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              </li>
+              <li>
+                <FormControl disabled={isSendingRequest} className="approvers__item-form">
+                  <InputLabel id="pm-label">PM</InputLabel>
+                  <Select
+                    labelId="pm-label"
+                    multiple
+                    value={pmanager}
+                    onChange={(e) => {
+                      setPManager(e.target.value);
+                    }}
+                    input={<Input />}
+                    //MenuProps={MenuProps}
+                  >
+                    {pm.map((name) => (
+                      <MenuItem
+                        key={name}
+                        value={name}
+                        style={{ fontWeight: pmanager.indexOf(name) === -1 ? '400' : '600' }}>
+                        {name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                {pmanager.length > 0 && (
+                  <Tooltip title="clear">
+                    <IconButton
+                      disabled={isSendingRequest}
+                      className="clear-icon"
+                      onClick={() => setPManager([])}>
+                      <CloseIcon />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              </li>
+              <li>CEO</li>
+            </ol>
+          </div>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => {}} color="primary">
-            Add
+          <Button
+            className="new-request__ok-btn"
+            variant="contained"
+            disabled={isSendingRequest}
+            onClick={handleSendRequest}>
+            Send Request
           </Button>
-          <Button onClick={onClose} color="primary" autoFocus>
+          <Button
+            className="new-request__cancel-btn"
+            variant="contained"
+            disabled={isSendingRequest}
+            onClick={onClose}
+            autoFocus>
             Cancel
           </Button>
         </DialogActions>
