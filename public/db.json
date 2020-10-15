@@ -129,6 +129,16 @@
       "lastName": "Smith",
       "role": "Manager",
       "vacations": []
+    },
+    {
+      "login": "nill.smith@admin.com",
+      "email": "dwadwa@mail.r",
+      "password": "11111",
+      "firstName": "John",
+      "lastName": "New",
+      "role": "Employee",
+      "vacations": [],
+      "id": 14
     }
   ]
 }
