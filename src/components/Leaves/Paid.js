@@ -9,6 +9,7 @@ import {
   IconButton,
   Input,
 } from '@material-ui/core';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import CloseIcon from '@material-ui/icons/Close';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
@@ -22,7 +23,7 @@ function Paid({ prRoles, prParticipation, prManagers, isSendingRequest }) {
   const [focusedFrom, setFocusFrom] = useState(false);
   const [focusedTo, setFocusTo] = useState(false);
   const [toDate, setToDate] = useState(null);
-  const [pmanager, setPManager] = useState([]);
+  const [pmanager, setPManager] = useState([' ']);
 
   const getDateDifference = Math.round(toDate - fromDate) / (1000 * 60 * 60 * 24);
 
@@ -97,7 +98,7 @@ function Paid({ prRoles, prParticipation, prManagers, isSendingRequest }) {
           <li>Accounting</li>
 
           <li>
-            <FormControl disabled={isSendingRequest} className="approvers__item-form">
+            {/* <FormControl disabled={isSendingRequest} className="approvers__item-form">
               <InputLabel id="pm-label">PM</InputLabel>
               <Select
                 labelId="pm-label"
@@ -128,8 +129,33 @@ function Paid({ prRoles, prParticipation, prManagers, isSendingRequest }) {
                   <CloseIcon />
                 </IconButton>
               </Tooltip>
-            )}
+            )} */}
           </li>
+          {pmanager.map((pm, idx) => (
+            <div key={`frag-${idx}`}>
+              <Autocomplete
+                options={prManagers}
+                key={`idx-${idx}`}
+                autoComplete
+                inputValue={pmanager[idx]}
+                onInputChange={(e, newValue) => {
+                  pmanager[idx] = newValue;
+                  setPManager([...pmanager]);
+                }}
+                renderInput={(params) => <TextField {...params} margin="normal" />}
+              />
+              <button
+                key={`btn-${idx}`}
+                onClick={() => {
+                  pmanager.splice(idx + 1, 0, '');
+                  console.log(pmanager);
+                  setPManager([...pmanager]);
+                  console.log(pmanager);
+                }}>
+                Click here
+              </button>
+            </div>
+          ))}
         </ol>
       </div>
     </div>
