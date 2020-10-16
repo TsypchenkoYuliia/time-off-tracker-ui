@@ -3,26 +3,12 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import {
-  TextField,
-  Button,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Tooltip,
-  IconButton,
-  Input,
-} from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
-import 'react-dates/initialize';
-import 'react-dates/lib/css/_datepicker.css';
-import { SingleDatePicker } from 'react-dates';
+import { Button, Select, MenuItem, FormControl, InputLabel } from '@material-ui/core';
 import axios from 'axios';
 
 import {
   Administrative,
-  AdministartiveFm,
+  AdministrativeFm,
   Paid,
   SickNoDoc,
   SickWithDoc,
@@ -77,7 +63,52 @@ function NewRequest({ isOpen, onClose }) {
     switch (type) {
       case 0:
         return (
+          <AdministrativeFm
+            prRoles={prRoles}
+            prParticipation={prParticipation}
+            prManagers={prManagers}
+            isSendingRequest={isSendingRequest}
+          />
+        );
+      case 1:
+        return (
           <Administrative
+            prRoles={prRoles}
+            prParticipation={prParticipation}
+            prManagers={prManagers}
+            isSendingRequest={isSendingRequest}
+          />
+        );
+      case 2:
+        return (
+          <Social
+            prRoles={prRoles}
+            prParticipation={prParticipation}
+            prManagers={prManagers}
+            isSendingRequest={isSendingRequest}
+          />
+        );
+      case 3:
+        return (
+          <SickNoDoc
+            prRoles={prRoles}
+            prParticipation={prParticipation}
+            prManagers={prManagers}
+            isSendingRequest={isSendingRequest}
+          />
+        );
+      case 4:
+        return (
+          <SickWithDoc
+            prRoles={prRoles}
+            prParticipation={prParticipation}
+            prManagers={prManagers}
+            isSendingRequest={isSendingRequest}
+          />
+        );
+      case 5:
+        return (
+          <Study
             prRoles={prRoles}
             prParticipation={prParticipation}
             prManagers={prManagers}

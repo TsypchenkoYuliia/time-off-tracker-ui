@@ -22,6 +22,7 @@ function Header() {
   const handleLogout = () => {
     localStorage.removeItem('name');
     setContext(localStorage.getItem('name'));
+    setAnchor(null);
     history.push('/login');
   };
 

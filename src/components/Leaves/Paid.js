@@ -1,11 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import React, { useState } from 'react';
 import {
   TextField,
-  Button,
   Select,
   MenuItem,
   FormControl,
@@ -18,7 +13,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import { SingleDatePicker } from 'react-dates';
-import axios from 'axios';
 
 function Paid({ prRoles, prParticipation, prManagers, isSendingRequest }) {
   const [role, setRole] = useState(0);
@@ -29,7 +23,6 @@ function Paid({ prRoles, prParticipation, prManagers, isSendingRequest }) {
   const [focusedTo, setFocusTo] = useState(false);
   const [toDate, setToDate] = useState(null);
   const [pmanager, setPManager] = useState([]);
-  //const [isSendingRequest, setRequestSending] = useState(false);
 
   const getDateDifference = Math.round(toDate - fromDate) / (1000 * 60 * 60 * 24);
 
@@ -43,6 +36,7 @@ function Paid({ prRoles, prParticipation, prManagers, isSendingRequest }) {
           alignItems: 'center',
         }}>
         <SingleDatePicker
+          id="dateFrom"
           disabled={isSendingRequest}
           showClearDate
           placeholder="From"
@@ -56,6 +50,7 @@ function Paid({ prRoles, prParticipation, prManagers, isSendingRequest }) {
         />
 
         <SingleDatePicker
+          id="dateTo"
           disabled={isSendingRequest}
           showClearDate
           placeholder="To"
@@ -103,7 +98,9 @@ function Paid({ prRoles, prParticipation, prManagers, isSendingRequest }) {
               setRole(e.target.value);
             }}>
             {prRoles.map((item, idx) => (
-              <MenuItem value={idx}>{item}</MenuItem>
+              <MenuItem key={`role-${item}-${idx}`} value={idx}>
+                {item}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
@@ -116,7 +113,9 @@ function Paid({ prRoles, prParticipation, prManagers, isSendingRequest }) {
               setPart(e.target.value);
             }}>
             {prParticipation.map((item, idx) => (
-              <MenuItem value={idx}>{item}</MenuItem>
+              <MenuItem key={`part-${item}-${idx}`} value={idx}>
+                {item}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
