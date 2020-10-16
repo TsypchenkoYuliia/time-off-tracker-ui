@@ -89,36 +89,6 @@ function Paid({ prRoles, prParticipation, prManagers, isSendingRequest }) {
           }}
           style={{ marginBottom: 20, width: '100%' }}
         />
-
-        <FormControl disabled={isSendingRequest} style={{ marginBottom: 20, width: '100%' }}>
-          <InputLabel>Project Role</InputLabel>
-          <Select
-            value={role}
-            onChange={(e) => {
-              setRole(e.target.value);
-            }}>
-            {prRoles.map((item, idx) => (
-              <MenuItem key={`role-${item}-${idx}`} value={idx}>
-                {item}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <FormControl disabled={isSendingRequest} style={{ marginBottom: 20, width: '100%' }}>
-          <InputLabel>Project participation</InputLabel>
-          <Select
-            value={part}
-            onChange={(e) => {
-              setPart(e.target.value);
-            }}>
-            {prParticipation.map((item, idx) => (
-              <MenuItem key={`part-${item}-${idx}`} value={idx}>
-                {item}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
       </div>
 
       <div>
@@ -160,7 +130,6 @@ function Paid({ prRoles, prParticipation, prManagers, isSendingRequest }) {
               </Tooltip>
             )}
           </li>
-          <li>CEO</li>
         </ol>
       </div>
     </div>

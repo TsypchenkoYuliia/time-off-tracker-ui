@@ -148,7 +148,9 @@ function NewRequest({ isOpen, onClose }) {
                 setLeaveType(e.target.value);
               }}>
               {leaves.map((type, idx) => (
-                <MenuItem value={idx}>{type}</MenuItem>
+                <MenuItem key={`${type}-${idx}`} value={idx}>
+                  {type}
+                </MenuItem>
               ))}
             </Select>
           </FormControl>
