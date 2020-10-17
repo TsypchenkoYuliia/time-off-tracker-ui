@@ -24,6 +24,24 @@ function Paid({
 
   const getDateDifference = Math.round(toDate - fromDate) / (1000 * 60 * 60 * 24);
 
+  const mapping = React.useCallback((managers) => {
+    return (
+      <>
+        {managers.map((manager, idx) => {
+          return (
+            <Signers
+              key={`sign-idx-${idx}`}
+              idx={idx}
+              options={prManagers}
+              managers={managers}
+              onChange={changeManagers}
+            />
+          );
+        })}
+      </>
+    );
+  }, []);
+
   return (
     <div>
       <div
@@ -91,18 +109,7 @@ function Paid({
         <h3>Approvers</h3>
         <ol className="approvers__list">
           <li>Accounting</li>
-          {managers.map((manager, idx) => {
-            console.log('idx ' + manager);
-            return (
-              <Signers
-                key={`sign-idx-${idx}`}
-                idx={idx}
-                options={prManagers}
-                managers={managers}
-                onChange={changeManagers}
-              />
-            );
-          })}
+          {mapping(managers)}
         </ol>
       </div>
     </div>

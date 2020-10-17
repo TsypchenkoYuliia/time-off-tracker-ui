@@ -42,7 +42,7 @@ function NewRequest({ isOpen, onClose }) {
   const [comment, setComment] = useState('');
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
-  const [pmanager, setPManager] = useState([' ']);
+  const [pmanager, setPManager] = useState(['']);
 
   const handleComment = (e) => {
     setComment(e.target.value);
@@ -97,59 +97,17 @@ function NewRequest({ isOpen, onClose }) {
   const renderLeaveBody = (type) => {
     switch (type) {
       case 0:
-        return (
-          <AdministrativeFm
-            prRoles={prRoles}
-            prParticipation={prParticipation}
-            prManagers={prManagers}
-            isSendingRequest={isSendingRequest}
-          />
-        );
+        return <AdministrativeFm {...typeProps} />;
       case 1:
-        return (
-          <Administrative
-            prRoles={prRoles}
-            prParticipation={prParticipation}
-            prManagers={prManagers}
-            isSendingRequest={isSendingRequest}
-          />
-        );
+        return <Administrative {...typeProps} />;
       case 2:
-        return (
-          <Social
-            prRoles={prRoles}
-            prParticipation={prParticipation}
-            prManagers={prManagers}
-            isSendingRequest={isSendingRequest}
-          />
-        );
+        return <Social {...typeProps} />;
       case 3:
-        return (
-          <SickNoDoc
-            prRoles={prRoles}
-            prParticipation={prParticipation}
-            prManagers={prManagers}
-            isSendingRequest={isSendingRequest}
-          />
-        );
+        return <SickNoDoc {...typeProps} />;
       case 4:
-        return (
-          <SickWithDoc
-            prRoles={prRoles}
-            prParticipation={prParticipation}
-            prManagers={prManagers}
-            isSendingRequest={isSendingRequest}
-          />
-        );
+        return <SickWithDoc {...typeProps} />;
       case 5:
-        return (
-          <Study
-            prRoles={prRoles}
-            prParticipation={prParticipation}
-            prManagers={prManagers}
-            isSendingRequest={isSendingRequest}
-          />
-        );
+        return <Study {...typeProps} />;
       case 6:
         return <Paid {...typeProps} />;
     }

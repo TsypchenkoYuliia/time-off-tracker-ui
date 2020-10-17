@@ -9,7 +9,8 @@ function Signers({ options, managers, onChange, idx }) {
         <Autocomplete
           className="approvers__item-form"
           options={options.filter((item) => !managers.includes(item))}
-          value={managers[idx]}
+          getOptionSelected={(option, value) => option.value === value.value}
+          value={managers[idx].length === 0 ? null : managers[idx]}
           onChange={(e, newValue) => {
             managers[idx] = newValue;
             onChange([...managers]);
@@ -41,4 +42,4 @@ function Signers({ options, managers, onChange, idx }) {
   );
 }
 
-export default Signers;
+export default React.memo(Signers);
