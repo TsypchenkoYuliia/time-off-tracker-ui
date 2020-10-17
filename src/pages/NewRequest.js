@@ -39,6 +39,26 @@ const prManagers = [
 function NewRequest({ isOpen, onClose }) {
   const [leaveType, setLeaveType] = useState(6);
   const [isSendingRequest, setRequestSending] = useState(false);
+  const [comment, setComment] = useState('');
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
+  const [pmanager, setPManager] = useState([' ']);
+
+  const handleComment = (e) => {
+    setComment(e.target.value);
+  };
+
+  const handleFromDate = (date) => {
+    setFromDate(date);
+  };
+
+  const handleToDate = (date) => {
+    setToDate(date);
+  };
+
+  const handleManagers = (array) => {
+    setPManager(array);
+  };
 
   const handleSendRequest = async () => {
     setRequestSending(true);
@@ -58,6 +78,21 @@ function NewRequest({ isOpen, onClose }) {
     }
     getAllData();
   }, []);
+
+  const typeProps = {
+    prRoles: prRoles,
+    prParticipation: prParticipation,
+    prManagers: prManagers,
+    isSendingRequest: isSendingRequest,
+    comment: comment,
+    changeComment: handleComment,
+    fromDate: fromDate,
+    changeFromDate: handleFromDate,
+    toDate: toDate,
+    changeToDate: handleToDate,
+    managers: pmanager,
+    changeManagers: handleManagers,
+  };
 
   const renderLeaveBody = (type) => {
     switch (type) {
@@ -116,14 +151,7 @@ function NewRequest({ isOpen, onClose }) {
           />
         );
       case 6:
-        return (
-          <Paid
-            prRoles={prRoles}
-            prParticipation={prParticipation}
-            prManagers={prManagers}
-            isSendingRequest={isSendingRequest}
-          />
-        );
+        return <Paid {...typeProps} />;
     }
   };
 
