@@ -34,6 +34,12 @@ const prManagers = [
   'Reygar Smith',
   'Kirill Retushev',
   'Yevheniy Enderov',
+  'Bill Ivanova',
+  'John Reygar',
+  'John Killian',
+  'John Lothbrok',
+  'John Kirev',
+  'John Kirov',
 ];
 
 function NewRequest({ isOpen, onClose }) {
