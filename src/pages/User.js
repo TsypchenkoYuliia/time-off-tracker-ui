@@ -28,12 +28,6 @@ const routes = [
     exact: true,
     main: () => <OtherRequests />,
   },
-  {
-    name: 'New Request',
-    path: '/new_request',
-    exact: true,
-    main: () => <NewRequest />,
-  },
 ];
 
 function User() {

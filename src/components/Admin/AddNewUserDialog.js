@@ -4,7 +4,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { TextField, Button, Select, MenuItem, FormControl, InputLabel } from '@material-ui/core';
-import { NewUser } from '../Axios';
+import { newUser } from '../Axios';
 
 export default function AddNewUser({ isOpen, onClose, roles }) {
   const [firstName, setFirstName] = useState('');
@@ -37,7 +37,7 @@ export default function AddNewUser({ isOpen, onClose, roles }) {
       return;
     }
 
-    NewUser({
+    newUser({
       login: 'nill.smith@admin.com',
       email: email,
       password: password,

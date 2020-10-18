@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Button, Select, MenuItem, FormControl, InputLabel } from '@material-ui/core';
 import axios from 'axios';
+import { Context } from '../Context';
+import { postNewRequest, getAllManagers } from '../components/Axios';
 
 import {
   Administrative,
@@ -26,8 +28,6 @@ const leaves = [
   'Paid leave',
 ];
 
-const prRoles = ['BA lead', 'QA', 'Junior'];
-const prParticipation = ['Full', 'Fullest', 'Distance'];
 const prManagers = [
   'Anney Kirillova',
   'Bill Ivanov',
@@ -43,12 +43,14 @@ const prManagers = [
 ];
 
 function NewRequest({ isOpen, onClose }) {
+  const [context, setContext] = useContext(Context);
   const [leaveType, setLeaveType] = useState(6);
   const [isSendingRequest, setRequestSending] = useState(false);
   const [comment, setComment] = useState('');
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [pmanager, setPManager] = useState(['']);
+  const [duration, setDuration] = useState('Full day');
 
   const handleComment = (e) => {
     setComment(e.target.value);
@@ -68,6 +70,25 @@ function NewRequest({ isOpen, onClose }) {
 
   const handleSendRequest = async () => {
     setRequestSending(true);
+
+    //real request
+    // await postNewRequest({
+    //   Type: leaveType,
+    //   StartDate: fromDate,
+    //   EndDate: toDate,
+    //   Reviews: pmanager,
+    //   HasAccountingReviewPassed: false, //лишнее
+    //   Comment: comment,
+    //   State: 'New',
+    //   Duration: duration,
+    //   UserId: context.userId,
+    // })
+    //   .then(({ data }) => console.log(data))
+    //   .catch((err) => {
+    //     console.log(err);
+    //     console.log(err.response.data);
+    //   });
+
     await axios
       .post('https://url')
       .then((data) => {})
@@ -75,9 +96,13 @@ function NewRequest({ isOpen, onClose }) {
     setRequestSending(false);
   };
 
+  const handleDuration = (duration) => {
+    setDuration(duration);
+  };
+
   useEffect(() => {
     async function getAllData() {
-      //await axios.get(url).then({data}=>) //axios request for all managers
+      //await axios.get(url).then({data}=>) //axios request for all managers - getAllManagers
       //axios request for all roles
       //axios request for all parts
       //axios request for all pm
@@ -86,8 +111,6 @@ function NewRequest({ isOpen, onClose }) {
   }, []);
 
   const typeProps = {
-    prRoles: prRoles,
-    prParticipation: prParticipation,
     prManagers: prManagers,
     isSendingRequest: isSendingRequest,
     comment: comment,
@@ -98,6 +121,8 @@ function NewRequest({ isOpen, onClose }) {
     changeToDate: handleToDate,
     managers: pmanager,
     changeManagers: handleManagers,
+    duration: duration,
+    changeDuration: handleDuration,
   };
 
   const renderLeaveBody = (type) => {

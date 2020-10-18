@@ -17,30 +17,32 @@ function Paid({
   managers,
   changeManagers,
 }) {
-  const [role, setRole] = useState(0);
-  const [part, setPart] = useState(0);
   const [focusedFrom, setFocusFrom] = useState(false);
   const [focusedTo, setFocusTo] = useState(false);
 
   const getDateDifference = Math.round(toDate - fromDate) / (1000 * 60 * 60 * 24);
 
-  const mapping = React.useCallback((managers) => {
-    return (
-      <>
-        {managers.map((manager, idx) => {
-          return (
-            <Signers
-              key={`sign-idx-${idx}`}
-              idx={idx}
-              options={prManagers}
-              managers={managers}
-              onChange={changeManagers}
-            />
-          );
-        })}
-      </>
-    );
-  }, []);
+  const mapping = React.useCallback(
+    (managers) => {
+      return (
+        <>
+          {managers.map((manager, idx) => {
+            return (
+              <Signers
+                key={`sign-idx-${idx}`}
+                idx={idx}
+                options={prManagers}
+                managers={managers}
+                onChange={changeManagers}
+                isDisabled={isSendingRequest}
+              />
+            );
+          })}
+        </>
+      );
+    },
+    [isSendingRequest],
+  );
 
   return (
     <div>
@@ -56,7 +58,6 @@ function Paid({
           disabled={isSendingRequest}
           showClearDate
           placeholder="From"
-          //transitionDuration={5000} WTF!
           isDayBlocked={(day) => (toDate ? day > toDate : null)}
           numberOfMonths={1}
           date={fromDate}
@@ -70,7 +71,6 @@ function Paid({
           disabled={isSendingRequest}
           showClearDate
           placeholder="To"
-          //transitionDuration={5} WTF!
           isDayBlocked={(day) => (fromDate ? day < fromDate : null)}
           numberOfMonths={1}
           date={toDate}

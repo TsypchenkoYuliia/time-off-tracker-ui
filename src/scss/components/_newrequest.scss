@@ -1,6 +1,6 @@
 .MuiDialogContent-root.leave {
   width: 550px;
-  min-height: 550px;
+  min-height: 340px;
 }
 
 ol {
@@ -112,4 +112,13 @@ ol:first-of-type {
 
 .MuiButton-contained.new-request__cancel-btn:hover {
   background-color: #f50057;
+}
+
+.MuiFormControl-root.sick-no-doc__use {
+  width: 110px;
+  padding-bottom: 14px;
+
+  .MuiInputBase-input.MuiInput-input {
+    font-size: 18px;
+  }
 }
