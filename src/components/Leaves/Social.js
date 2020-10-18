@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { TextField } from '@material-ui/core';
+import DoneIcon from '@material-ui/icons/Done';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import { SingleDatePicker } from 'react-dates';
@@ -82,7 +83,10 @@ function Social({
       <div>
         <h3>Approvers</h3>
         <ol className="approvers__list">
-          <li>Accounting</li>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <DoneIcon className="done-icon" />
+            <li>Accounting</li>
+          </div>
         </ol>
       </div>
     </div>

@@ -22,10 +22,10 @@ ol:first-of-type {
 .approvers__list {
   padding: 20px 20px 0 0;
   font-size: 20px;
-  margin-left: 20px;
 
   .approvers__item {
     margin-bottom: 20px;
+    width: 100%;
 
     .approvers__add-btn {
       background-color: #2bff00;
@@ -120,5 +120,20 @@ ol:first-of-type {
 
   .MuiInputBase-input.MuiInput-input {
     font-size: 18px;
+  }
+}
+
+.MuiSvgIcon-root.done-icon {
+  fill: lightgray;
+  opacity: 0;
+
+  &.accepted {
+    fill: #00c903;
+    opacity: 1;
+  }
+
+  &.rejected {
+    fill: #f50057;
+    opacity: 1;
   }
 }

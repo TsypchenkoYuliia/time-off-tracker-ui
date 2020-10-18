@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { TextField } from '@material-ui/core';
+import { TextField, Tooltip } from '@material-ui/core';
+import DoneIcon from '@material-ui/icons/Done';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import { SingleDatePicker } from 'react-dates';
@@ -28,14 +29,28 @@ function Paid({
         <>
           {managers.map((manager, idx) => {
             return (
-              <Signers
-                key={`sign-idx-${idx}`}
-                idx={idx}
-                options={prManagers}
-                managers={managers}
-                onChange={changeManagers}
-                isDisabled={isSendingRequest}
-              />
+              <div
+                key={`div-icon-${idx}`}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                }}>
+                <DoneIcon
+                  key={`done-icon-${idx}`}
+                  className="done-icon"
+                  style={{
+                    marginTop: '5px',
+                  }}
+                />
+                <Signers
+                  key={`sign-idx-${idx}`}
+                  idx={idx}
+                  options={prManagers}
+                  managers={managers}
+                  onChange={changeManagers}
+                  isDisabled={isSendingRequest}
+                />
+              </div>
             );
           })}
         </>
@@ -108,7 +123,10 @@ function Paid({
       <div>
         <h3>Approvers</h3>
         <ol className="approvers__list">
-          <li>Accounting</li>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <DoneIcon className="done-icon" />
+            <li>Accounting</li>
+          </div>
           {mapping(managers)}
         </ol>
       </div>
