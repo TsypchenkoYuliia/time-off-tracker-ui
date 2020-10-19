@@ -6,16 +6,20 @@ export const newUser = (newUser) => {
   return axios.post(BASE_URL + 'users', newUser); //endpoint in api - accounts
 };
 
+export const getUserById = (id) => {
+  return axios.get(BASE_URL + 'users/' + id);
+};
+
 export const deleteUser = (id) => {
   return axios.delete(BASE_URL + 'users/' + id);
 };
 
-export const changeUserRole = (id, role) => {
-  return axios.patch(BASE_URL + 'users/' + id, { role });
+export const changeUserRole = (id, changedUser) => {
+  return axios.put(BASE_URL + 'users/' + id, changedUser);
 };
 
 export const getAllManagers = () => {
-  return axios.get(BASE_URL + 'managers'); //endpoint will be later
+  return axios.get(BASE_URL + 'users?role=Manager');
 };
 
 export const postNewRequest = ({
@@ -27,15 +31,14 @@ export const postNewRequest = ({
   pmanager,
   duration,
 }) => {
-  return axios.post(BASE_URL + 'new_request', {
-    Type: leaveType,
+  return axios.post(BASE_URL + 'requests', {
+    TypeId: leaveType,
     StartDate: fromDate,
     EndDate: toDate,
-    Reviews: pmanager,
-    HasAccountingReviewPassed: false, //лишнее
+    ReviewersIds: pmanager,
     Comment: comment,
-    State: 'New',
-    Duration: duration,
+    //State: 'New', оставлю для себя, уберу при добавлении интерсепции и после теста реального бэка
+    DurationId: duration,
     UserId: userId,
   });
 };

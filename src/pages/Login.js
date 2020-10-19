@@ -54,9 +54,8 @@ function Login() {
       return;
     }
 
-    const url = 'https://localhost:44381/auth/token';
-
     //Работает шикарно, добавить осталось только добавление тела ошибки в нужную секцию ошибок
+    // const url = 'https://localhost:44381/auth/token';
     // axios
     //   .post(url, { username: email, password: password })
     //   .then((response) => {

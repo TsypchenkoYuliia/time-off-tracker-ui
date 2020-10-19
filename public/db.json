@@ -11,23 +11,23 @@
       "vacations": []
     },
     {
-      "id": 2,
       "login": "jane@apriorit.com",
       "email": "jane@apriorit.com",
       "password": "password",
       "firstName": "Jane",
       "lastName": "Doe",
       "role": "Manager",
-      "vacations": []
+      "vacations": [],
+      "id": 2
     },
     {
       "id": 3,
       "login": "mark.smith@admin.com",
       "email": "mark.smith@admin.com",
       "password": "password",
-      "firstName": "Mark",
+      "firstName": "Marky",
       "lastName": "Smith",
-      "role": "Manager",
+      "role": "Employee",
       "vacations": []
     },
     {

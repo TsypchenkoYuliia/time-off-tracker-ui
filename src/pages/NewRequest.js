@@ -18,17 +18,15 @@ import {
   Study,
 } from '../components/Leaves/index';
 
-const leaves = [
-  'Administrative force majeure leave',
-  'Administrative leave',
-  'Social leave',
-  'Sick leave (no documents)',
-  'Sick leave (with documents)',
-  'Study leave',
-  'Paid leave',
-];
+//ForceMajeureAdministrativeLeave = 1,
+// AdministrativeUnpaidLeave = 2,
+// SocialLeave = 3,
+// SickLeaveWithoutDocuments = 4,
+// SickLeaveWithDocuments = 5,
+// StudyLeave = 6,
+// PaidLeave = 7
 
-const prManagers = [
+let prManagers = [
   'Anney Kirillova',
   'Bill Ivanov',
   'Reygar Smith',
@@ -44,13 +42,13 @@ const prManagers = [
 
 function NewRequest({ isOpen, onClose }) {
   const [context, setContext] = useContext(Context);
-  const [leaveType, setLeaveType] = useState(6);
+  const [leaveType, setLeaveType] = useState(7);
   const [isSendingRequest, setRequestSending] = useState(false);
   const [comment, setComment] = useState('');
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [pmanager, setPManager] = useState(['']);
-  const [duration, setDuration] = useState('Full day');
+  const [duration, setDuration] = useState(2);
 
   const handleComment = (e) => {
     setComment(e.target.value);
@@ -73,14 +71,14 @@ function NewRequest({ isOpen, onClose }) {
 
     //real request
     // await postNewRequest({
-    //   Type: leaveType,
+    //   TypeId: leaveType,
     //   StartDate: fromDate,
     //   EndDate: toDate,
-    //   Reviews: pmanager,
+    //   ReviewersIds: pmanager,
     //   HasAccountingReviewPassed: false, //лишнее
     //   Comment: comment,
     //   State: 'New',
-    //   Duration: duration,
+    //   DurationId: duration,
     //   UserId: context.userId,
     // })
     //   .then(({ data }) => console.log(data))
@@ -102,10 +100,10 @@ function NewRequest({ isOpen, onClose }) {
 
   useEffect(() => {
     async function getAllData() {
-      //await axios.get(url).then({data}=>) //axios request for all managers - getAllManagers
-      //axios request for all roles
-      //axios request for all parts
-      //axios request for all pm
+      await getAllManagers().then(({ data }) => {
+        //закомментировал для корректной работы с локальным беком
+        //prManagers = data;
+      });
     }
     getAllData();
   }, []);
@@ -125,24 +123,16 @@ function NewRequest({ isOpen, onClose }) {
     changeDuration: handleDuration,
   };
 
-  const renderLeaveBody = (type) => {
-    switch (type) {
-      case 0:
-        return <AdministrativeFm {...typeProps} />;
-      case 1:
-        return <Administrative {...typeProps} />;
-      case 2:
-        return <Social {...typeProps} />;
-      case 3:
-        return <SickNoDoc {...typeProps} />;
-      case 4:
-        return <SickWithDoc {...typeProps} />;
-      case 5:
-        return <Study {...typeProps} />;
-      case 6:
-        return <Paid {...typeProps} />;
-    }
-  };
+  const renderLeaveBody = [
+    null,
+    { title: 'Administrative force majeure leave', comp: <AdministrativeFm {...typeProps} /> },
+    { title: 'Administrative leave', comp: <Administrative {...typeProps} /> },
+    { title: 'Social leave', comp: <Social {...typeProps} /> },
+    { title: 'Sick leave (no documents)', comp: <SickNoDoc {...typeProps} /> },
+    { title: 'Sick leave (with documents)', comp: <SickWithDoc {...typeProps} /> },
+    { title: 'Study leave', comp: <Study {...typeProps} /> },
+    { title: 'Paid leave', comp: <Paid {...typeProps} /> },
+  ];
 
   return (
     <div>
@@ -164,15 +154,17 @@ function NewRequest({ isOpen, onClose }) {
               onChange={(e) => {
                 setLeaveType(e.target.value);
               }}>
-              {leaves.map((type, idx) => (
-                <MenuItem key={`${type}-${idx}`} value={idx}>
-                  {type}
-                </MenuItem>
-              ))}
+              {renderLeaveBody.map((type, idx) =>
+                idx !== 0 ? (
+                  <MenuItem key={`${type.title}-${idx}`} value={idx}>
+                    {type.title}
+                  </MenuItem>
+                ) : null,
+              )}
             </Select>
           </FormControl>
 
-          {renderLeaveBody(leaveType)}
+          {renderLeaveBody[leaveType].comp}
         </DialogContent>
         <DialogActions>
           <Button
