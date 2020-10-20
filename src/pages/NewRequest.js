@@ -42,7 +42,7 @@ let prManagers = [
 
 function NewRequest({ isOpen, onClose }) {
   const [context, setContext] = useContext(Context);
-  const [leaveType, setLeaveType] = useState(7);
+  const [leaveType, setLeaveType] = useState(6);
   const [isSendingRequest, setRequestSending] = useState(false);
   const [comment, setComment] = useState('');
   const [fromDate, setFromDate] = useState(null);
@@ -124,14 +124,17 @@ function NewRequest({ isOpen, onClose }) {
   };
 
   const renderLeaveBody = [
-    null,
-    { title: 'Administrative force majeure leave', comp: <AdministrativeFm {...typeProps} /> },
-    { title: 'Administrative leave', comp: <Administrative {...typeProps} /> },
-    { title: 'Social leave', comp: <Social {...typeProps} /> },
-    { title: 'Sick leave (no documents)', comp: <SickNoDoc {...typeProps} /> },
-    { title: 'Sick leave (with documents)', comp: <SickWithDoc {...typeProps} /> },
-    { title: 'Study leave', comp: <Study {...typeProps} /> },
-    { title: 'Paid leave', comp: <Paid {...typeProps} /> },
+    {
+      id: 1,
+      title: 'Administrative force majeure leave',
+      comp: <AdministrativeFm {...typeProps} />,
+    },
+    { id: 2, title: 'Administrative leave', comp: <Administrative {...typeProps} /> },
+    { id: 3, title: 'Social leave', comp: <Social {...typeProps} /> },
+    { id: 4, title: 'Sick leave (no documents)', comp: <SickNoDoc {...typeProps} /> },
+    { id: 5, title: 'Sick leave (with documents)', comp: <SickWithDoc {...typeProps} /> },
+    { id: 6, title: 'Study leave', comp: <Study {...typeProps} /> },
+    { id: 7, title: 'Paid leave', comp: <Paid {...typeProps} /> },
   ];
 
   return (
@@ -154,17 +157,15 @@ function NewRequest({ isOpen, onClose }) {
               onChange={(e) => {
                 setLeaveType(e.target.value);
               }}>
-              {renderLeaveBody.map((type, idx) =>
-                idx !== 0 ? (
-                  <MenuItem key={`${type.title}-${idx}`} value={idx}>
-                    {type.title}
-                  </MenuItem>
-                ) : null,
-              )}
+              {renderLeaveBody.map((type, idx) => (
+                <MenuItem key={`${type.title}-${idx}`} value={type.id}>
+                  {type.title}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
 
-          {renderLeaveBody[leaveType].comp}
+          {renderLeaveBody[leaveType - 1].comp}
         </DialogContent>
         <DialogActions>
           <Button

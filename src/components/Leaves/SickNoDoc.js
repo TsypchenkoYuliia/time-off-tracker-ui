@@ -7,9 +7,10 @@ import { SingleDatePicker } from 'react-dates';
 import Approvers from './Approvers';
 import LeaveComment from './LeaveComment';
 
-// HalfDay = 1,
-// FullDay = 2
-const useTypes = ['', 'Half day', 'Full day'];
+const useTypes = [
+  { id: 1, text: 'Half day' },
+  { id: 2, text: 'Full day' },
+];
 
 function SickNoDoc({
   isSendingRequest,
@@ -67,13 +68,11 @@ function SickNoDoc({
         <FormControl className="sick-no-doc__use">
           <InputLabel>Use</InputLabel>
           <Select value={duration} onChange={(e) => changeDuration(e.target.value)}>
-            {useTypes.map((use, idx) =>
-              useTypes != 0 ? (
-                <MenuItem key={`use-${use}-idx-${idx}`} value={idx}>
-                  {use}
-                </MenuItem>
-              ) : null,
-            )}
+            {useTypes.map((use, idx) => (
+              <MenuItem key={`use-${use.text}-idx-${idx}`} value={use.id}>
+                {use.text}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
       </div>
