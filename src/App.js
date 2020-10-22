@@ -9,10 +9,13 @@ import Admin from './pages/Admin';
 import { Context } from './Context';
 
 //only for external Header  user check
+const role = localStorage.getItem('role');
+const token = localStorage.getItem('token');
+const userId = localStorage.getItem('userId');
 const user = localStorage.getItem('name');
 
 function App() {
-  const [context, setContext] = useState(user);
+  const [context, setContext] = useState({ userId, user, role, token });
   return (
     <Context.Provider value={[context, setContext]}>
       <div>

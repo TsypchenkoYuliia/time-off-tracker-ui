@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { TextField, Typography, Button, InputAdornment, IconButton } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
+import axios from 'axios';
 
 import { Context } from '../Context';
 
@@ -18,8 +19,8 @@ function Login() {
 
   const [context, setContext] = useContext(Context);
 
-  const [email, setEmail] = useState(MASTER_EMAIL);
-  const [password, setPassword] = useState(MASTER_PASSWORD);
+  const [email, setEmail] = useState(USER_EMAIL); //'mainadmin@mail.ru'
+  const [password, setPassword] = useState(USER_PASSWORD); //'mainadmin89M#'
   const [showPassword, setPasswordVisibility] = useState(false);
   const [errors, setErrors] = useState({
     email: '',
@@ -53,14 +54,32 @@ function Login() {
       return;
     }
 
+    //Работает шикарно, добавить осталось только добавление тела ошибки в нужную секцию ошибок
+    // const url = 'https://localhost:44381/auth/token';
+    // axios
+    //   .post(url, { username: email, password: password })
+    //   .then((response) => {
+    //     const { data } = response;
+    //     console.log(response);
+    //     localStorage.setItem('userId', data.userId);
+    //     localStorage.setItem('role', 'User'); //data.role
+    //     localStorage.setItem('token', data.token);
+    //     setContext({ userId: data.userId, role: 'User', token: data.token });
+    //   })
+    //   .catch((err) => console.log(err.response.data));
+
     //тут будет запрос на проверку почты и пароля через аксиос
     if (email === MASTER_EMAIL && password === MASTER_PASSWORD) {
-      localStorage.setItem('name', 'admin');
-      setContext('admin');
+      localStorage.setItem('userId', '1');
+      localStorage.setItem('role', 'Admin'); //data.role
+      localStorage.setItem('token', 'token');
+      setContext({ userId: '1', role: 'Admin', token: 'token' });
       history.push('/admin');
     } else if (email === USER_EMAIL && password === USER_PASSWORD) {
-      localStorage.setItem('name', 'joe');
-      setContext('joe');
+      localStorage.setItem('userId', '1');
+      localStorage.setItem('role', 'User'); //data.role
+      localStorage.setItem('token', 'token');
+      setContext({ userId: '1', role: 'User', token: 'token' });
       history.push('/');
     }
   };
@@ -69,7 +88,7 @@ function Login() {
     setPasswordVisibility(!showPassword);
   };
 
-  if (context) history.push('/');
+  if (context.role) history.push('/');
 
   return (
     <div>
@@ -137,4 +156,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default React.memo(Login);

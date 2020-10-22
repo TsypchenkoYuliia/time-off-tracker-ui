@@ -20,8 +20,10 @@ function Header() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('name');
-    setContext(localStorage.getItem('name'));
+    //localStorage.removeItem('role');
+    localStorage.clear();
+    setContext({ userId: null, user: null, role: null, token: null });
+    setAnchor(null);
     history.push('/login');
   };
 
@@ -30,10 +32,10 @@ function Header() {
   };
 
   useEffect(() => {
-    console.log(localStorage.getItem('name'));
+    console.log(localStorage.getItem('role'));
   }, [context]);
 
-  //пофиксить появление меню...может стрикт мод?
+  //пофиксить появление меню...?
   return (
     <header>
       <AppBar position="static">
@@ -41,12 +43,12 @@ function Header() {
           <h2 className="title" onClick={toHomePage}>
             Vacation
           </h2>
-          {context ? (
+          {context.role ? (
             <>
               <Avatar
                 src="https://gagadget.com/media/post_big/The_Elder_Scrolls_V_Skyrim.jpg"
                 onClick={handleClickAvatar}>
-                {context.substr(0, 2).toUpperCase()}
+                {context.role.substr(0, 2).toUpperCase()}
               </Avatar>
               <Menu
                 elevation={5}

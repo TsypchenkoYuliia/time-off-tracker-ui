@@ -28,12 +28,6 @@ const routes = [
     exact: true,
     main: () => <OtherRequests />,
   },
-  {
-    name: 'New Request',
-    path: '/new_request',
-    exact: true,
-    main: () => <NewRequest />,
-  },
 ];
 
 function User() {
@@ -43,12 +37,12 @@ function User() {
   let history = useHistory();
 
   useEffect(() => {
-    if (!context) {
+    if (!context.role) {
       history.push('/login');
       return;
     }
 
-    if (context === 'admin') {
+    if (context.role === 'Admin') {
       history.replace('/admin');
       return;
     }
@@ -56,7 +50,7 @@ function User() {
     setSelectedRoute(routes.findIndex((item) => item.path === history.location.pathname));
   }, [context, history.location.pathname]);
 
-  if (!context) {
+  if (!context.role) {
     history.push('/login');
   }
 

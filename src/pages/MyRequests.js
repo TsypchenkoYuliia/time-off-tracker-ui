@@ -129,7 +129,9 @@ class MyRequests extends Component {
             <InputLabel>State</InputLabel>
             <Select value={this.state.requestState} onChange={this.handleStateChange}>
               {states.map((state, idx) => (
-                <MenuItem value={idx}>{state}</MenuItem>
+                <MenuItem key={`state-${state}-idx-${idx}`} value={idx}>
+                  {state}
+                </MenuItem>
               ))}
             </Select>
           </FormControl>
@@ -138,7 +140,9 @@ class MyRequests extends Component {
             <InputLabel>Type</InputLabel>
             <Select value={this.state.requestType} onChange={this.handleTypeChange}>
               {types.map((type, idx) => (
-                <MenuItem value={idx}>{type}</MenuItem>
+                <MenuItem key={`type-${type}-idx-${idx}`} value={idx}>
+                  {type}
+                </MenuItem>
               ))}
             </Select>
           </FormControl>

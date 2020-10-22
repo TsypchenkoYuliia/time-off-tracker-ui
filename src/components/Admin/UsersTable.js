@@ -24,7 +24,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import ConfirmationDialog from './ConfirmationDialog';
 import AddNewUserDialog from './AddNewUserDialog';
-import { DeleteUser, ChangeUserRole } from '../Axios';
+import { deleteUser, changeUserRole, getUserById } from '../Axios';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -223,16 +223,24 @@ export default function EnhancedTable({ data, roles }) {
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
   const handleDelete = (id) => {
-    DeleteUser(id).then(() => setOpen(false));
+    deleteUser(id).then(() => setOpen(false));
   };
 
-  const handleChangeRole = (id, pos) => {
-    if (role === roles.indexOf(pos)) {
+  const handleChangeRole = (id, item) => {
+    if (role === roles.indexOf(item.role)) {
       setEditing(null);
       return;
     }
 
-    ChangeUserRole(id, roles[role]);
+    changeUserRole(id, {
+      login: item.login,
+      email: item.email,
+      password: item.password,
+      firstName: item.firstName,
+      lastName: item.lastName,
+      role: roles[role],
+      vacations: item.vacations,
+    });
   };
 
   return (
@@ -313,7 +321,7 @@ export default function EnhancedTable({ data, roles }) {
                             variant="contained"
                             style={{ marginRight: 10 }}
                             onClick={() => {
-                              handleChangeRole(item.id, item.role);
+                              handleChangeRole(item.id, item);
                             }}>
                             Ok
                           </Button>

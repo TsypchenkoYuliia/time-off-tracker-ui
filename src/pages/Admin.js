@@ -18,7 +18,7 @@ function Admin() {
   let history = useHistory();
 
   useEffect(() => {
-    if (context !== 'admin') {
+    if (context.role !== 'Admin') {
       history.replace('/');
       return;
     }
