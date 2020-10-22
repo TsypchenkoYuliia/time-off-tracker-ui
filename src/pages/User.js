@@ -5,9 +5,9 @@ import { Button, ButtonGroup } from '@material-ui/core';
 import Home from './Home';
 import MyRequests from './MyRequests';
 import OtherRequests from './OtherRequests';
-import NewRequest from './NewRequest';
 
 import { Context } from '../Context';
+import NewRequest from './NewRequest';
 
 const routes = [
   {
@@ -83,6 +83,7 @@ function User() {
           {routes.map((route, index) => (
             <Route key={index} path={route.path} exact={route.exact} children={<route.main />} />
           ))}
+          <Route path="/my_requests/" children={<NewRequest isOpen={true}></NewRequest>}></Route>
         </Switch>
       </div>
     </div>

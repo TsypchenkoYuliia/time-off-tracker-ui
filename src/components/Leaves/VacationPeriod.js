@@ -3,7 +3,14 @@ import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import { SingleDatePicker } from 'react-dates';
 
-function VacationPeriod({ fromDate, changeFromDate, toDate, changeToDate, isSendingRequest }) {
+function VacationPeriod({
+  fromDate,
+  changeFromDate,
+  toDate,
+  changeToDate,
+  isSendingRequest,
+  disablePeriod,
+}) {
   const [focusedFrom, setFocusFrom] = useState(false);
   const [focusedTo, setFocusTo] = useState(false);
 
@@ -43,7 +50,7 @@ function VacationPeriod({ fromDate, changeFromDate, toDate, changeToDate, isSend
         onFocusChange={({ focused }) => setFocusTo(focused)}
       />
 
-      {fromDate && toDate && getDateDifference >= 0 ? (
+      {!disablePeriod && fromDate && toDate && getDateDifference >= 0 ? (
         <h4 style={{ paddingTop: 3 }}>
           {getDateDifference + 1} vacation {getDateDifference === 0 ? 'day' : 'days'}
         </h4>
