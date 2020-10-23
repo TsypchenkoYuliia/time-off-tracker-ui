@@ -12,7 +12,7 @@ function LeaveComment({ disabled, comment, changeComment }) {
       className="form-input"
       value={comment}
       onChange={(e) => changeComment(e)}
-      style={{ marginBottom: 20, width: '100%' }}
+      style={{ marginBottom: 20, marginTop: 20, width: '100%' }}
     />
   );
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Select, MenuItem, FormControl, InputLabel, TextField } from '@material-ui/core';
 
-import VacationPeriod from '../Leaves/VacationPeriod';
+import ReviewsTable from './ReviewsTable';
+import ReviewsFilter from './ReviewsFilter';
 
 const types = [
   {
@@ -20,27 +20,84 @@ const types = [
   { id: 7, title: 'Paid leave' },
 ];
 
+const testData = [
+  {
+    id: 1,
+    firstName: 'John',
+    lastName: 'Smith',
+    role: 'Manager',
+    type: 'Administrative leave',
+    dates: '10/10/2020-10/11/2020',
+    comments: 'pls',
+    details: 'Already approved by: Accounting',
+  },
+  {
+    id: 2,
+    firstName: 'John2',
+    lastName: 'Smith2',
+    role: 'Employee',
+    type: 'Administrative leave',
+    dates: '10/10/2020-10/11/2020',
+    comments: 'help',
+    details: 'Already approved by: John Smith',
+  },
+  {
+    id: 3,
+    firstName: 'John3',
+    lastName: 'Smith3',
+    role: 'Manager',
+    type: 'Study leave',
+    dates: '10/10/2020-10/11/2020',
+    comments: 'me',
+    details: 'Already approved by: Accounting',
+  },
+  {
+    id: 4,
+    firstName: 'John4',
+    lastName: 'Smith4',
+    role: 'Employee',
+    type: 'Administrative leave',
+    dates: '10/10/2020-10/11/2020',
+    comments: 'someone',
+    details: 'Already approved by: Accounting',
+  },
+  {
+    id: 5,
+    firstName: 'John5',
+    lastName: 'Smith5',
+    role: 'Manager',
+    type: 'Study leave',
+    dates: '10/10/2020-10/11/2020',
+    comments: 'there',
+    details: 'Already approved by: Accounting',
+  },
+  {
+    id: 6,
+    firstName: 'John6',
+    lastName: 'Smith6',
+    role: 'Employee',
+    type: 'Administrative leave',
+    dates: '10/10/2020-10/11/2020',
+    comments: 'are',
+    details: 'Already approved by: Accounting',
+  },
+];
+
+const headCellsNew = [
+  { id: 'From', label: 'From' },
+  { id: 'Role', label: 'Role' },
+  { id: 'Type', label: 'Type' },
+  { id: 'Dates', label: 'Dates' },
+  { id: 'Comments', label: 'Request Comments' },
+  { id: 'Details', label: 'State Details' },
+  { id: 'Actions', label: 'Action' },
+];
+
 function NewRequests() {
   const [isSendingRequest, setRequestSending] = useState(false);
-  const [type, setType] = useState(0);
-  const [name, setName] = useState('');
-  const [fromDate, setFromDate] = useState(null);
-  const [toDate, setToDate] = useState(null);
-
-  const handleFromDate = (date) => {
-    setFromDate(date);
-  };
-
-  const handleToDate = (date) => {
-    setToDate(date);
-  };
 
   const handleSendRequest = async () => {
     setRequestSending(true);
-  };
-
-  const handleTypeChange = (e) => {
-    setType(e.target.value);
   };
 
   useEffect(() => {
@@ -49,33 +106,8 @@ function NewRequests() {
 
   return (
     <div>
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <VacationPeriod
-          fromDate={fromDate}
-          changeFromDate={handleFromDate}
-          toDate={toDate}
-          changeToDate={handleToDate}
-          isSendingRequest={isSendingRequest}
-          disablePeriod={true}
-        />
-        <TextField
-          label="Filter by Name"
-          variant="standard"
-          onChange={(e) => setName(e.target.value)}
-          style={{ width: 200, marginRight: 30 }}
-        />
-        <FormControl style={{ marginRight: 50, width: 350 }}>
-          <InputLabel>Type</InputLabel>
-          <Select value={type} onChange={(e) => handleTypeChange(e)}>
-            {types.map((type, idx) => (
-              <MenuItem key={`type-${type.title}-idx-${idx}`} value={type.id}>
-                {type.title}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </div>
-      <p>New Requests!</p>
+      <ReviewsFilter types={types} isSendingRequest={isSendingRequest} />
+      <ReviewsTable data={testData} headCells={headCellsNew} />
     </div>
   );
 }

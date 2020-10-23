@@ -21,7 +21,6 @@ function VacationPeriod({
       style={{
         display: 'flex',
         flexDirection: 'row',
-        marginBottom: 20,
         alignItems: 'center',
       }}>
       <SingleDatePicker
