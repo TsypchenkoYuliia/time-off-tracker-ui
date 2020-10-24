@@ -5,6 +5,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { TextField, Button, Select, MenuItem, FormControl, InputLabel } from '@material-ui/core';
 import { newUser } from '../Axios';
+import { axiosApi } from '../../config';
 
 export default function AddNewUser({ isOpen, onClose, roles }) {
   const [firstName, setFirstName] = useState('');
@@ -46,6 +47,17 @@ export default function AddNewUser({ isOpen, onClose, roles }) {
       role: roles[role],
       vacations: [],
     }).then(() => onClose);
+
+    //for Interceptors testing !!!!!!!
+    // axiosApi
+    //   .post('Accounts', {
+    //     firstName: firstName,
+    //     lastName: lastName,
+    //     email: email,
+    //     password: password,
+    //     role: roles[role],
+    //   })
+    //   .then(() => onClose());
   };
 
   return (

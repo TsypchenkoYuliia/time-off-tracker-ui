@@ -62,9 +62,9 @@ function Login() {
     //     const { data } = response;
     //     console.log(response);
     //     localStorage.setItem('userId', data.userId);
-    //     localStorage.setItem('role', 'User'); //data.role
+    //     localStorage.setItem('role', data.role); //data.role
     //     localStorage.setItem('token', data.token);
-    //     setContext({ userId: data.userId, role: 'User', token: data.token });
+    //     setContext({ userId: data.userId, role: data.role, token: data.token });
     //   })
     //   .catch((err) => console.log(err.response.data));
 

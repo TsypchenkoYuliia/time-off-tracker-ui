@@ -1,14 +1,13 @@
 import axios from 'axios';
-import { Context } from './Context';
 
-const BASE_URL = 'http://localhost:3001/';
+const BASE_URL = 'http://localhost:3001/'; // 'https://localhost:44381/'; - for testing
 
 const axiosApi = axios.create({
   baseURL: BASE_URL,
 });
 
-axios.interceptors.request.use((config) => {
-  config.headers.Authorization = `Bearer ${Context.token}`;
+axiosApi.interceptors.request.use((config) => {
+  config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;
   return config;
 });
 

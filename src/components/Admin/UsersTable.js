@@ -25,6 +25,7 @@ import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import ConfirmationDialog from './ConfirmationDialog';
 import AddNewUserDialog from './AddNewUserDialog';
 import { deleteUser, changeUserRole, getUserById } from '../Axios';
+import { axiosApi } from '../../config';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -223,6 +224,7 @@ export default function EnhancedTable({ data, roles }) {
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
   const handleDelete = (id) => {
+    //axiosApi.delete('Users/' + id).then(() => setOpen(false)); - // for Interceptors testing !!!!!!!
     deleteUser(id).then(() => setOpen(false));
   };
 

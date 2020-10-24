@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { TextField, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from 'axios';
+import { axiosApi } from '../config';
 
 import { Context } from '../Context';
 import UsersTable from '../components/Admin/UsersTable';
@@ -24,6 +25,18 @@ function Admin() {
     }
 
     setLoading(true);
+
+    // for Interceptors testing !!!!!!!
+    // axiosApi
+    //   .get('Users')
+    //   .then(({ data }) => {
+    //     const filteredData = data.filter((item) => item.role !== 'Admin');
+    //     console.log(data);
+    //     setData(filteredData);
+
+    //     setLoading(false);
+    //   })
+    //   .catch((error) => console.log(error));
 
     axios
       .get(uri)
