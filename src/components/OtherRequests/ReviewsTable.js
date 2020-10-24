@@ -11,7 +11,7 @@ import {
   TableRow,
 } from '@material-ui/core';
 
-function EnhancedTableHead({ headCells }) {
+function EnhancedTableHead({ headCells, actions }) {
   return (
     <TableHead>
       <TableRow>
@@ -24,6 +24,11 @@ function EnhancedTableHead({ headCells }) {
             {headCell.label}
           </TableCell>
         ))}
+        {actions ? (
+          <TableCell className="reviews__table-cell" align="center" padding="default">
+            Actions
+          </TableCell>
+        ) : null}
       </TableRow>
     </TableHead>
   );
@@ -51,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ReviewsTable({ data, headCells }) {
+export default function ReviewsTable({ data, headCells, actions }) {
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -89,7 +94,7 @@ export default function ReviewsTable({ data, headCells }) {
             aria-labelledby="tableTitle"
             size={'medium'}
             aria-label="enhanced table">
-            <EnhancedTableHead headCells={headCells} />
+            <EnhancedTableHead headCells={headCells} actions={actions} />
             <TableBody>
               {data
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -115,21 +120,23 @@ export default function ReviewsTable({ data, headCells }) {
                       <TableCell align="center">{item.dates}</TableCell>
                       <TableCell align="center">{item.comments}</TableCell>
                       <TableCell align="center">{item.details}</TableCell>
-                      <TableCell align="center">
-                        <Button
-                          className="users-table__ok-btn"
-                          variant="contained"
-                          style={{ marginRight: 10 }}
-                          onClick={() => {}}>
-                          Accept
-                        </Button>
-                        <Button
-                          className="users-table__cancel-btn"
-                          variant="contained"
-                          onClick={() => {}}>
-                          Reject
-                        </Button>
-                      </TableCell>
+                      {actions ? (
+                        <TableCell align="center">
+                          <Button
+                            className="users-table__ok-btn"
+                            variant="contained"
+                            style={{ marginRight: 10 }}
+                            onClick={() => {}}>
+                            Accept
+                          </Button>
+                          <Button
+                            className="users-table__cancel-btn"
+                            variant="contained"
+                            onClick={() => {}}>
+                            Reject
+                          </Button>
+                        </TableCell>
+                      ) : null}
                     </TableRow>
                   );
                 })}
