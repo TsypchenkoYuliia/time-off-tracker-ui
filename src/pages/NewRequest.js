@@ -189,4 +189,4 @@ function NewRequest({ isOpen, onClose }) {
   );
 }
 
-export default NewRequest;
+export default React.memo(NewRequest);

@@ -20,7 +20,7 @@ function Admin() {
 
   useEffect(() => {
     if (context.role !== 'Admin') {
-      history.replace('/');
+      history.replace('/home');
       return;
     }
 

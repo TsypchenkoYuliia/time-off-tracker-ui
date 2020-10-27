@@ -26,13 +26,6 @@ function TabPanel(props) {
   );
 }
 
-function a11yProps(index) {
-  return {
-    id: `full-width-tab-${index}`,
-    'aria-controls': `full-width-tabpanel-${index}`,
-  };
-}
-
 function OtherRequests() {
   const [value, setValue] = React.useState(0);
 
@@ -44,9 +37,9 @@ function OtherRequests() {
     <div>
       <AppBar style={{ width: '480px' }} position="static" color="default">
         <Tabs value={value} onChange={handleChange} indicatorColor="primary" textColor="primary">
-          <Tab label="New Requests" {...a11yProps(0)} />
-          <Tab label="Approved by me" {...a11yProps(1)} />
-          <Tab label="Rejected by me" {...a11yProps(2)} />
+          <Tab label="New Requests" />
+          <Tab label="Approved by me" />
+          <Tab label="Rejected by me" />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>

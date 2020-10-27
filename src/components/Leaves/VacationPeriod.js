@@ -10,11 +10,14 @@ function VacationPeriod({
   changeToDate,
   isSendingRequest,
   disablePeriod,
+  showAllDays,
 }) {
   const [focusedFrom, setFocusFrom] = useState(false);
   const [focusedTo, setFocusTo] = useState(false);
 
   const getDateDifference = Math.round(toDate - fromDate) / (1000 * 60 * 60 * 24);
+
+  const showPastDays = () => false;
 
   return (
     <div
@@ -28,6 +31,7 @@ function VacationPeriod({
         disabled={isSendingRequest}
         showClearDate
         placeholder="From"
+        isOutsideRange={showAllDays && showPastDays}
         isDayBlocked={(day) => (toDate ? day > toDate : null)}
         numberOfMonths={1}
         date={fromDate}
@@ -41,6 +45,7 @@ function VacationPeriod({
         disabled={isSendingRequest}
         showClearDate
         placeholder="To"
+        isOutsideRange={showAllDays && showPastDays}
         isDayBlocked={(day) => (fromDate ? day < fromDate : null)}
         numberOfMonths={1}
         date={toDate}
@@ -58,4 +63,4 @@ function VacationPeriod({
   );
 }
 
-export default VacationPeriod;
+export default React.memo(VacationPeriod);

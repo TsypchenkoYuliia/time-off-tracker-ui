@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { TextField, Typography, Button, InputAdornment, IconButton } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import axios from 'axios';
@@ -16,6 +16,7 @@ const USER_PASSWORD = 'admin123';
 
 function Login() {
   let history = useHistory();
+  let location = useLocation();
 
   const [context, setContext] = useContext(Context);
 
@@ -26,6 +27,10 @@ function Login() {
     email: '',
     password: '',
   });
+
+  React.useEffect(() => {
+    console.log(location);
+  }, []);
 
   const checkForm = () => {
     let error = { ...errors };
@@ -74,13 +79,13 @@ function Login() {
       localStorage.setItem('role', 'Admin'); //data.role
       localStorage.setItem('token', 'token');
       setContext({ userId: '1', role: 'Admin', token: 'token' });
-      history.push('/admin');
+      history.replace(location.state ? location.state.from.pathname : '/admin');
     } else if (email === USER_EMAIL && password === USER_PASSWORD) {
       localStorage.setItem('userId', '1');
       localStorage.setItem('role', 'User'); //data.role
       localStorage.setItem('token', 'token');
       setContext({ userId: '1', role: 'User', token: 'token' });
-      history.push('/');
+      history.replace(location.state ? location.state.from.pathname : '/home');
     }
   };
 

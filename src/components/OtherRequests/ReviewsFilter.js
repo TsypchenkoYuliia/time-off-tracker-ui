@@ -28,6 +28,7 @@ function ReviewsFilter({ types, isSendingRequest }) {
         changeFromDate={handleFromDate}
         toDate={toDate}
         changeToDate={handleToDate}
+        showAllDays={true}
         isSendingRequest={isSendingRequest}
         disablePeriod={true}
       />
@@ -59,4 +60,4 @@ function ReviewsFilter({ types, isSendingRequest }) {
   );
 }
 
-export default ReviewsFilter;
+export default React.memo(ReviewsFilter);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Switch, Route, Link, useHistory } from 'react-router-dom';
+import { Switch, Route, Link, useHistory, Redirect } from 'react-router-dom';
 import { Button, ButtonGroup } from '@material-ui/core';
 
 import Home from './Home';
@@ -12,7 +12,7 @@ import NewRequest from './NewRequest';
 const routes = [
   {
     name: 'Home',
-    path: '/',
+    path: '/home',
     exact: true,
     main: () => <Home />,
   },
@@ -37,11 +37,6 @@ function User() {
   let history = useHistory();
 
   useEffect(() => {
-    if (!context.role) {
-      history.push('/login');
-      return;
-    }
-
     if (context.role === 'Admin') {
       history.replace('/admin');
       return;
@@ -49,10 +44,6 @@ function User() {
 
     setSelectedRoute(routes.findIndex((item) => item.path === history.location.pathname));
   }, [context, history.location.pathname]);
-
-  if (!context.role) {
-    history.push('/login');
-  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row', height: 'calc(100vh - 65px)' }}>
@@ -81,9 +72,39 @@ function User() {
       <div style={{ flex: 1, padding: '10px', height: '100%' }}>
         <Switch>
           {routes.map((route, index) => (
-            <Route key={index} path={route.path} exact={route.exact} children={<route.main />} />
+            <Route
+              key={index}
+              path={route.path}
+              exact={route.exact}
+              render={({ location }) =>
+                context.token ? (
+                  <route.main />
+                ) : (
+                  <Redirect
+                    to={{
+                      pathname: '/login',
+                      state: { from: location },
+                    }}
+                  />
+                )
+              }
+            />
           ))}
-          <Route path="/my_requests/" children={<NewRequest isOpen={true}></NewRequest>}></Route>
+          <Route
+            path="/my_requests/:id"
+            render={({ location }) =>
+              context.token ? (
+                <NewRequest isOpen={true}></NewRequest>
+              ) : (
+                <Redirect
+                  to={{
+                    pathname: '/login',
+                    state: { from: location },
+                  }}
+                />
+              )
+            }></Route>
+          <Route path="*" children={<h2>Wrong way!</h2>}></Route>
         </Switch>
       </div>
     </div>
