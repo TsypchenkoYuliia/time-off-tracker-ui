@@ -55,8 +55,7 @@ function stableSort(array, comparator) {
 
 const headCells = [
   { id: 'firstName', numeric: true, disablePadding: true, label: 'Name' },
-  { id: 'login', numeric: false, disablePadding: false, label: 'Login' },
-  { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
+  { id: 'email', numeric: false, disablePadding: false, label: 'Username' },
   { id: 'role', numeric: false, disablePadding: false, label: 'Role' },
   { id: 'button', numeric: false, disablePadding: false, label: '' },
 ];
@@ -97,7 +96,6 @@ function EnhancedTableHead(props) {
 
 EnhancedTableHead.propTypes = {
   classes: PropTypes.object.isRequired,
-  numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   onSelectAllClick: PropTypes.func.isRequired,
   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
@@ -125,15 +123,12 @@ const useToolbarStyles = makeStyles((theme) => ({
   },
 }));
 
-const EnhancedTableToolbar = ({ numSelected, roles }) => {
+const EnhancedTableToolbar = ({ roles }) => {
   const classes = useToolbarStyles();
   const [openNewUser, setOpenNewUser] = React.useState(false);
 
   return (
-    <Toolbar
-      className={clsx(classes.root, {
-        [classes.highlight]: numSelected > 0,
-      })}>
+    <Toolbar className={classes.root}>
       <h2 className="users-table__title">List of users</h2>
 
       <>
@@ -155,10 +150,6 @@ const EnhancedTableToolbar = ({ numSelected, roles }) => {
       </>
     </Toolbar>
   );
-};
-
-EnhancedTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired,
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -224,7 +215,6 @@ export default function EnhancedTable({ data, roles }) {
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
   const handleDelete = (id) => {
-    //axiosApi.delete('Users/' + id).then(() => setOpen(false)); - // for Interceptors testing !!!!!!!
     deleteUser(id).then(() => setOpen(false));
   };
 
@@ -234,15 +224,13 @@ export default function EnhancedTable({ data, roles }) {
       return;
     }
 
-    changeUserRole(id, {
-      login: item.login,
-      email: item.email,
-      password: item.password,
+    changeUserRole({
+      id: item.id,
       firstName: item.firstName,
       lastName: item.lastName,
+      userName: item.userName,
       role: roles[role],
-      vacations: item.vacations,
-    });
+    }).then(() => setEditing(false));
   };
 
   return (
@@ -289,10 +277,9 @@ export default function EnhancedTable({ data, roles }) {
                       </Tooltip>
                     </TableCell>
                     <TableCell component="th" id={labelId} scope="row" padding="none">
-                      {item.firstName.concat(' ', item.lastName)}
+                      {item.firstName ? item.firstName.concat(' ', item.lastName) : ''}
                     </TableCell>
-                    <TableCell align="center">{item.login}</TableCell>
-                    <TableCell align="center">{item.email}</TableCell>
+                    <TableCell align="center">{item.userName}</TableCell>
 
                     <TableCell align="center">
                       {isEditing === item.id ? (

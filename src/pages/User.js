@@ -14,18 +14,21 @@ const routes = [
     name: 'Home',
     path: '/home',
     exact: true,
+    access: ['Accountant', 'Manager', 'Employee'],
     main: () => <Home />,
   },
   {
     name: `My Requests`,
     path: '/my_requests',
     exact: true,
+    access: ['Accountant', 'Manager', 'Employee'],
     main: () => <MyRequests />,
   },
   {
     name: 'Other Requests',
     path: '/other_requests',
     exact: true,
+    access: ['Accountant', 'Manager'],
     main: () => <OtherRequests />,
   },
 ];
@@ -50,46 +53,50 @@ function User() {
       <div className="sidebar">
         <ButtonGroup orientation="vertical" style={{ width: '100%' }}>
           {routes.map((route, idx) => {
-            return (
-              <Link key={`path-${route.name}-${idx}`} to={route.path}>
-                <Button
-                  disableElevation
-                  className="button"
-                  variant={idx === selectedRoute ? 'contained' : 'text'}
-                  color={idx === selectedRoute ? 'primary' : ''}
-                  fullWidth
-                  onClick={() => {
-                    setSelectedRoute(idx);
-                  }}>
-                  {route.name}
-                </Button>
-              </Link>
-            );
+            if (route.access.includes(context.role))
+              return (
+                <Link key={`path-${route.name}-${idx}`} to={route.path}>
+                  <Button
+                    disableElevation
+                    className="button"
+                    variant={idx === selectedRoute ? 'contained' : 'text'}
+                    color={idx === selectedRoute ? 'primary' : ''}
+                    fullWidth
+                    onClick={() => {
+                      setSelectedRoute(idx);
+                    }}>
+                    {route.name}
+                  </Button>
+                </Link>
+              );
           })}
         </ButtonGroup>
       </div>
 
       <div style={{ flex: 1, padding: '10px', height: '100%' }}>
         <Switch>
-          {routes.map((route, index) => (
-            <Route
-              key={index}
-              path={route.path}
-              exact={route.exact}
-              render={({ location }) =>
-                context.token ? (
-                  <route.main />
-                ) : (
-                  <Redirect
-                    to={{
-                      pathname: '/login',
-                      state: { from: location },
-                    }}
-                  />
-                )
-              }
-            />
-          ))}
+          {routes.map((route, index) => {
+            if (route.access.includes(context.role))
+              return (
+                <Route
+                  key={index}
+                  path={route.path}
+                  exact={route.exact}
+                  render={({ location }) =>
+                    context.token ? (
+                      <route.main />
+                    ) : (
+                      <Redirect
+                        to={{
+                          pathname: '/login',
+                          state: { from: location },
+                        }}
+                      />
+                    )
+                  }
+                />
+              );
+          })}
           <Route
             path="/my_requests/:id"
             render={({ location }) =>

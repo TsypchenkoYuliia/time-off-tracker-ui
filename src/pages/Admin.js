@@ -2,13 +2,10 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { TextField, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import axios from 'axios';
-import { axiosApi } from '../config';
 
+import { axiosApi } from '../config';
 import { Context } from '../Context';
 import UsersTable from '../components/Admin/UsersTable';
-
-const uri = 'http://localhost:3001/users';
 
 function Admin() {
   const [isLoading, setLoading] = useState(false);
@@ -26,32 +23,19 @@ function Admin() {
 
     setLoading(true);
 
-    // for Interceptors testing !!!!!!!
-    // axiosApi
-    //   .get('Users')
-    //   .then(({ data }) => {
-    //     const filteredData = data.filter((item) => item.role !== 'Admin');
-    //     console.log(data);
-    //     setData(filteredData);
-
-    //     setLoading(false);
-    //   })
-    //   .catch((error) => console.log(error));
-
-    axios
-      .get(uri)
+    axiosApi
+      .get('Users')
       .then(({ data }) => {
-        const filteredData = data.filter((item) => item.role !== 'admin');
+        const filteredData = data.filter(
+          (item) => item.role !== 'Admin' && item.role !== 'Accountant',
+        );
+        console.log(data);
         setData(filteredData);
 
         setLoading(false);
       })
       .catch((error) => console.log(error));
   }, []);
-
-  const handleDelete = (array) => {
-    array.forEach((id) => axios.delete('http://localhost:3001/users/' + id));
-  };
 
   //Roles upload from db
   // useEffect(() => {
@@ -100,17 +84,7 @@ function Admin() {
       </div>
 
       <div style={{ padding: '0 20px' }}>
-        {data ? (
-          <UsersTable
-            data={handleFilterName()}
-            roles={roles}
-            onDelete={(arr) => {
-              handleDelete(arr);
-            }}
-          />
-        ) : (
-          <CircularProgress />
-        )}
+        {data ? <UsersTable data={handleFilterName()} roles={roles} /> : <CircularProgress />}
       </div>
     </div>
   );

@@ -4,15 +4,10 @@ import { TextField, Typography, Button, InputAdornment, IconButton } from '@mate
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import axios from 'axios';
 
+import { axiosApi } from '../config';
 import { Context } from '../Context';
 
 const emailRegex = RegExp(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/);
-
-const MASTER_EMAIL = 'admin@admin.com';
-const MASTER_PASSWORD = 'admin123';
-
-const USER_EMAIL = 'user@admin.com';
-const USER_PASSWORD = 'admin123';
 
 function Login() {
   let history = useHistory();
@@ -20,34 +15,30 @@ function Login() {
 
   const [context, setContext] = useContext(Context);
 
-  const [email, setEmail] = useState(USER_EMAIL); //'mainadmin@mail.ru'
-  const [password, setPassword] = useState(USER_PASSWORD); //'mainadmin89M#'
+  const [email, setEmail] = useState('mainadmin@mail.ru'); //'mainadmin@mail.ru'
+  const [password, setPassword] = useState('mainadmin89M#'); //'mainadmin89M#'
   const [showPassword, setPasswordVisibility] = useState(false);
   const [errors, setErrors] = useState({
     email: '',
     password: '',
   });
 
-  React.useEffect(() => {
-    console.log(location);
-  }, []);
-
   const checkForm = () => {
     let error = { ...errors };
 
-    error.email =
-      email !== ''
-        ? emailRegex.test(email)
-          ? ''
-          : 'invalid email address'
-        : 'no empty email address';
+    // error.email =
+    //   email !== ''
+    //     ? emailRegex.test(email)
+    //       ? ''
+    //       : 'invalid email address'
+    //     : 'no empty email address';
 
-    error.password =
-      password !== ''
-        ? password.length < 6
-          ? 'minimum 6 characaters required'
-          : ''
-        : 'no empty password';
+    // error.password =
+    //   password !== ''
+    //     ? password.length < 6
+    //       ? 'minimum 6 characaters required'
+    //       : ''
+    //     : 'no empty password';
 
     setErrors(error);
 
@@ -59,34 +50,25 @@ function Login() {
       return;
     }
 
-    //Работает шикарно, добавить осталось только добавление тела ошибки в нужную секцию ошибок
-    // const url = 'https://localhost:44381/auth/token';
-    // axios
-    //   .post(url, { username: email, password: password })
-    //   .then((response) => {
-    //     const { data } = response;
-    //     console.log(response);
-    //     localStorage.setItem('userId', data.userId);
-    //     localStorage.setItem('role', data.role); //data.role
-    //     localStorage.setItem('token', data.token);
-    //     setContext({ userId: data.userId, role: data.role, token: data.token });
-    //   })
-    //   .catch((err) => console.log(err.response.data));
-
-    //тут будет запрос на проверку почты и пароля через аксиос
-    if (email === MASTER_EMAIL && password === MASTER_PASSWORD) {
-      localStorage.setItem('userId', '1');
-      localStorage.setItem('role', 'Admin'); //data.role
-      localStorage.setItem('token', 'token');
-      setContext({ userId: '1', role: 'Admin', token: 'token' });
-      history.replace(location.state ? location.state.from.pathname : '/admin');
-    } else if (email === USER_EMAIL && password === USER_PASSWORD) {
-      localStorage.setItem('userId', '1');
-      localStorage.setItem('role', 'User'); //data.role
-      localStorage.setItem('token', 'token');
-      setContext({ userId: '1', role: 'User', token: 'token' });
-      history.replace(location.state ? location.state.from.pathname : '/home');
-    }
+    const url = 'https://localhost:44381/auth/token';
+    axios
+      .post(url, { username: email, password: password })
+      .then((response) => {
+        const { data } = response;
+        console.log(response);
+        localStorage.setItem('userId', data.userId);
+        localStorage.setItem('role', data.role);
+        localStorage.setItem('token', data.token);
+        setContext({ userId: data.userId, role: data.role, token: data.token });
+        history.replace(
+          location.state
+            ? location.state.from.pathname
+            : data.role === 'Admin'
+            ? '/admin'
+            : '/home',
+        );
+      })
+      .catch((err) => console.log(err.response.data));
   };
 
   const handleClickShowPassword = () => {
