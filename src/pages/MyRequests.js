@@ -16,6 +16,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import { SingleDatePicker } from 'react-dates';
+import moment from 'moment';
 
 import { getMyRequests } from '../components/Axios';
 
@@ -216,8 +217,8 @@ function MyRequests() {
             </TableBody> */}
             <TableBody>
               {data.map((item) => {
-                const startDate = item.startDate;
-                const endDate = item.endDate;
+                const startDate = moment(item.startDate).format('MM/DD/YYYY').toString();
+                const endDate = moment(item.endDate).format('MM/DD/YYYY').toString();
                 return (
                   <StyledTableRow key={item.id}>
                     <StyledTableCell component="th" scope="row">

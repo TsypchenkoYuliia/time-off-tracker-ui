@@ -9,7 +9,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import { getMyRequests } from '../components/Axios';
+import { getMyRequests, getMyReviews } from '../components/Axios';
 import { Context } from '../Context';
 import NewRequest from './NewRequest';
 
@@ -89,21 +89,26 @@ function Home() {
     async function getRequests() {
       await getMyRequests().then(({ data }) => {
         const subData = data.slice(0, 3);
+        console.log(subData);
         setRequests(subData);
-        setReviews(subData);
+        if (context.role === 'Employee') {
+          setLoading(false);
+        }
       });
-      setLoading(false);
     }
     getRequests();
 
-    // async function getReviews() {
-    //   await getMyReviews().then(({ data }) => {
-    //     const subData = data.slice(0, 3);
-    //     setReviews(subData);
-    //   });
-    //   setLoading(false);
-    // }
-    // getReviews();
+    if (context.role !== 'Employee') {
+      async function getReviews() {
+        await getMyReviews().then(({ data }) => {
+          const subData = data.slice(0, 3);
+          console.log(subData);
+          setReviews(subData);
+        });
+        setLoading(false);
+      }
+      getReviews();
+    }
   }, []);
 
   return (
@@ -200,14 +205,18 @@ function Home() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {rows.map((row) => (
-                      <StyledTableRow key={row.state}>
+                    {reviews.map((review) => (
+                      <StyledTableRow key={review.id}>
                         <StyledTableCell component="th" scope="row">
-                          {row.state}
+                          {states[review.request.stateId]}
                         </StyledTableCell>
-                        <StyledTableCell align="left">{row.type}</StyledTableCell>
-                        <StyledTableCell align="center">{row.date}</StyledTableCell>
-                        <StyledTableCell align="left">{row.description}</StyledTableCell>
+                        <StyledTableCell align="left">
+                          {types[review.request.typeId].title}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {review.request.startDate} - {review.request.endDate}
+                        </StyledTableCell>
+                        <StyledTableCell align="left">{review.request.comment}</StyledTableCell>
                       </StyledTableRow>
                     ))}
                   </TableBody>

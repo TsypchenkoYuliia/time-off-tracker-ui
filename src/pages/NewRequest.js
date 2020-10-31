@@ -4,6 +4,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Button, Select, MenuItem, FormControl, InputLabel } from '@material-ui/core';
+import moment from 'moment';
 
 import { Context } from '../Context';
 import { postNewRequest, getAllManagers } from '../components/Axios';
@@ -78,8 +79,8 @@ function NewRequest({ isOpen, onClose }) {
 
     await postNewRequest({
       leaveType,
-      fromDate: new Date(fromDate._d).toUTCString,
-      toDate: new Date(toDate._d).toUTCString,
+      fromDate: moment(fromDate._d).format('YYYY-MM-DD').toString(),
+      toDate: moment(fromDate._d).format('YYYY-MM-DD').toString(),
       pmanager: [1, ...reviewerIds],
       comment,
       duration,

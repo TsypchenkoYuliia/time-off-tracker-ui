@@ -28,9 +28,9 @@ export const getMyRequests = () => {
   return axiosApi.get('user/requests');
 };
 
-// export const getMyReviews = () => {
-//   return axiosApi.
-// }
+export const getMyReviews = () => {
+  return axiosApi.get('user/reviews');
+};
 
 export const postNewRequest = (newRequest) => {
   const { leaveType, fromDate, toDate, pmanager, comment, duration, userId } = newRequest;
