@@ -4,6 +4,10 @@ export const newUser = (newUser) => {
   return axiosApi.post('accounts', newUser);
 };
 
+export const getUsers = (name, role) => {
+  return axiosApi.get(`users?name=${name}&role=${role}`);
+};
+
 export const getUserById = (id) => {
   return axiosApi.get('users/' + id);
 };

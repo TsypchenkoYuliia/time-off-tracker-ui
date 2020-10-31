@@ -12,6 +12,7 @@ import {
   FormControl,
   InputLabel,
 } from '@material-ui/core';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import { SingleDatePicker } from 'react-dates';

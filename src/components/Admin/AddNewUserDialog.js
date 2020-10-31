@@ -7,7 +7,7 @@ import { TextField, Button, Select, MenuItem, FormControl, InputLabel } from '@m
 
 import { newUser } from '../Axios';
 
-export default function AddNewUser({ isOpen, onClose, roles }) {
+export default function AddNewUser({ isOpen, onClose, roles, updateUsers }) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [role, setRole] = useState(0);
@@ -20,7 +20,7 @@ export default function AddNewUser({ isOpen, onClose, roles }) {
     password: '',
   });
 
-  const handleAddNewUser = () => {
+  const handleAddNewUser = async () => {
     let error = { ...errors };
 
     error.firstName = firstName !== '' ? '' : 'no empty First Name';
@@ -46,7 +46,8 @@ export default function AddNewUser({ isOpen, onClose, roles }) {
       role: roles[role],
     };
 
-    newUser(user).then(() => onClose());
+    await newUser(user).then(() => onClose());
+    updateUsers();
   };
 
   return (

@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
 import {
   Button,
@@ -25,7 +24,6 @@ import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import ConfirmationDialog from './ConfirmationDialog';
 import AddNewUserDialog from './AddNewUserDialog';
 import { deleteUser, changeUserRole, getUserById } from '../Axios';
-import { axiosApi } from '../../config';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -123,7 +121,7 @@ const useToolbarStyles = makeStyles((theme) => ({
   },
 }));
 
-const EnhancedTableToolbar = ({ roles }) => {
+const EnhancedTableToolbar = ({ roles, updateUsers }) => {
   const classes = useToolbarStyles();
   const [openNewUser, setOpenNewUser] = React.useState(false);
 
@@ -146,6 +144,7 @@ const EnhancedTableToolbar = ({ roles }) => {
           isOpen={openNewUser}
           onClose={() => setOpenNewUser(false)}
           roles={roles}
+          updateUsers={updateUsers}
         />
       </>
     </Toolbar>
@@ -173,7 +172,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function EnhancedTable({ data, roles }) {
+export default function EnhancedTable({ data, roles, updateUsers }) {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState(null);
@@ -214,28 +213,30 @@ export default function EnhancedTable({ data, roles }) {
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
-  const handleDelete = (id) => {
-    deleteUser(id).then(() => setOpen(false));
+  const handleDelete = async (id) => {
+    await deleteUser(id).then(() => setOpen(false));
+    updateUsers();
   };
 
-  const handleChangeRole = (id, item) => {
+  const handleChangeRole = async (id, item) => {
     if (role === roles.indexOf(item.role)) {
       setEditing(null);
       return;
     }
 
-    changeUserRole({
+    await changeUserRole({
       id: item.id,
       firstName: item.firstName,
       lastName: item.lastName,
       userName: item.userName,
       role: roles[role],
     }).then(() => setEditing(false));
+    updateUsers();
   };
 
   return (
     <div className={classes.root}>
-      <EnhancedTableToolbar roles={roles} />
+      <EnhancedTableToolbar roles={roles} updateUsers={updateUsers} />
 
       <TableContainer>
         <Table
