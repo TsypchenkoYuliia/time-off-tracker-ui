@@ -4,7 +4,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Button, Select, MenuItem, FormControl, InputLabel } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { Context } from '../Context';
 import { postNewRequest, getAllManagers } from '../components/Axios';

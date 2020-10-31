@@ -84,7 +84,7 @@ function MyRequests() {
   const [requestType, setRequestType] = useState('0');
   const [focusedTo, setFocusTo] = useState(false);
   const [focusedFrom, setFocusFrom] = useState(false);
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(true);
 
   const handleStateChange = (event) => {
     setRequestState(event.target.value);
@@ -97,8 +97,8 @@ function MyRequests() {
   useEffect(() => {
     async function getRequests() {
       await getMyRequests().then(({ data }) => {
-        console.log(data);
         setData(data);
+        setLoading(false);
       });
     }
 
@@ -168,11 +168,14 @@ function MyRequests() {
         <Button
           variant="contained"
           color="secondary"
+          disabled={data && data.length === 0}
           style={{ verticalAlign: 'bottom', height: '40px' }}>
           Filter
         </Button>
       </div>
-      {data ? (
+      {isLoading ? (
+        <CircularProgress />
+      ) : data.length > 0 ? (
         <TableContainer>
           <TableContainer>
             <TableHead>
@@ -238,7 +241,7 @@ function MyRequests() {
           </TableContainer>
         </TableContainer>
       ) : (
-        <p>Loading</p>
+        <h3>No requests</h3>
       )}
     </div>
   );

@@ -10,9 +10,9 @@ import {
   TablePagination,
   TableRow,
 } from '@material-ui/core';
-import axios from 'axios';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
-import ReviewsTable from './ReviewsTable';
+//import ReviewsTable from './ReviewsTable';
 import ReviewsFilter from './ReviewsFilter';
 
 const types = [
@@ -155,6 +155,7 @@ function NewRequests() {
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [isLoading, setLoading] = useState(true);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -188,6 +189,7 @@ function NewRequests() {
     //uploading new data
     //axios.get(url).then(({data}) => setData(data)).catch(err => console.log(err));
     setData(testData);
+    setLoading(false);
   }, []);
 
   return (
@@ -195,7 +197,9 @@ function NewRequests() {
       <ReviewsFilter types={types} isSendingRequest={isSendingRequest} />
       {/* <ReviewsTable data={testData} headCells={headCellsNew} actions={true} /> */}
       <div className={classes.root}>
-        {data ? (
+        {isLoading ? (
+          <CircularProgress />
+        ) : data.length > 0 ? (
           <TableContainer>
             <Table
               className={classes.table}
@@ -264,7 +268,7 @@ function NewRequests() {
             />
           </TableContainer>
         ) : (
-          <p>No data</p>
+          <h3>No data</h3>
         )}
       </div>
     </div>

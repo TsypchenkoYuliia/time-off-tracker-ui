@@ -10,6 +10,7 @@ import {
   TablePagination,
   TableRow,
 } from '@material-ui/core';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import ReviewsTable from './ReviewsTable';
 import ReviewsFilter from './ReviewsFilter';
@@ -154,6 +155,7 @@ function Rejected() {
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [isLoading, setLoading] = useState(true);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -186,6 +188,7 @@ function Rejected() {
   useEffect(() => {
     //uploading new data
     setData(testData);
+    setLoading(false);
   }, []);
 
   return (
@@ -193,7 +196,9 @@ function Rejected() {
       <ReviewsFilter types={types} isSendingRequest={isSendingRequest} />
       {/* <ReviewsTable data={testData} headCells={headCellsNew} /> */}
       <div className={classes.root}>
-        {data ? (
+        {isLoading ? (
+          <CircularProgress />
+        ) : data.length > 0 ? (
           <TableContainer>
             <Table
               className={classes.table}
@@ -247,7 +252,7 @@ function Rejected() {
             />
           </TableContainer>
         ) : (
-          <p>No data</p>
+          <h3>No data</h3>
         )}
       </div>
     </div>
