@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Button, Select, MenuItem, FormControl, InputLabel, TextField } from '@material-ui/core';
 
 import VacationPeriod from '../Leaves/VacationPeriod';
+import moment from 'moment';
 
-function ReviewsFilter({ types, isSendingRequest }) {
+function ReviewsFilter({ types, isSendingRequest, handleFilter }) {
   const [type, setType] = useState(0);
   const [name, setName] = useState('');
   const [fromDate, setFromDate] = useState(null);
@@ -53,6 +54,13 @@ function ReviewsFilter({ types, isSendingRequest }) {
       <Button
         variant="contained"
         color="secondary"
+        onClick={() => {
+          const typeId = type === 0 ? '' : type;
+          const startDate =
+            fromDate !== null ? moment(fromDate._d).format('YYYY-MM-DD').toString() : '';
+          const endDate = toDate !== null ? moment(toDate._d).format('YYYY-MM-DD').toString() : '';
+          handleFilter(startDate, endDate, name, typeId);
+        }}
         style={{ verticalAlign: 'bottom', height: '40px' }}>
         Filter
       </Button>

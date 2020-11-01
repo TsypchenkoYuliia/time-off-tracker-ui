@@ -14,6 +14,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 //import ReviewsTable from './ReviewsTable';
 import ReviewsFilter from './ReviewsFilter';
+import { getMyReviews, getMyReviewsByFilter, getUsers } from '../Axios';
+import { convertDate } from '../../config';
 
 const types = [
   {
@@ -30,69 +32,6 @@ const types = [
   { id: 5, title: 'Sick leave (with documents)' },
   { id: 6, title: 'Study leave' },
   { id: 7, title: 'Paid leave' },
-];
-
-const testData = [
-  {
-    id: 1,
-    firstName: 'John',
-    lastName: 'Smith',
-    role: 'Manager',
-    type: 'Administrative leave',
-    dates: '10/10/2020-10/11/2020',
-    comments: 'pls',
-    details: 'Already approved by: Accounting',
-  },
-  {
-    id: 2,
-    firstName: 'John2',
-    lastName: 'Smith2',
-    role: 'Employee',
-    type: 'Administrative leave',
-    dates: '10/10/2020-10/11/2020',
-    comments: 'help',
-    details: 'Already approved by: John Smith',
-  },
-  {
-    id: 3,
-    firstName: 'John3',
-    lastName: 'Smith3',
-    role: 'Manager',
-    type: 'Study leave',
-    dates: '10/10/2020-10/11/2020',
-    comments: 'me',
-    details: 'Already approved by: Accounting',
-  },
-  {
-    id: 4,
-    firstName: 'John4',
-    lastName: 'Smith4',
-    role: 'Employee',
-    type: 'Administrative leave',
-    dates: '10/10/2020-10/11/2020',
-    comments: 'someone',
-    details: 'Already approved by: Accounting',
-  },
-  {
-    id: 5,
-    firstName: 'John5',
-    lastName: 'Smith5',
-    role: 'Manager',
-    type: 'Study leave',
-    dates: '10/10/2020-10/11/2020',
-    comments: 'there',
-    details: 'Already approved by: Accounting',
-  },
-  {
-    id: 6,
-    firstName: 'John6',
-    lastName: 'Smith6',
-    role: 'Employee',
-    type: 'Administrative leave',
-    dates: '10/10/2020-10/11/2020',
-    comments: 'are',
-    details: 'Already approved by: Accounting',
-  },
 ];
 
 const headCellsNew = [
@@ -151,6 +90,7 @@ const useStyles = makeStyles((theme) => ({
 
 function NewRequests() {
   const [data, setData] = useState(null);
+  const [users, setUsers] = useState(null);
   const [isSendingRequest, setRequestSending] = useState(false);
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
@@ -185,16 +125,63 @@ function NewRequests() {
     setRequestSending(true);
   };
 
+  const joinData = () => {
+    const joinedData = data.map((item) => {
+      item.request.reviews.map(
+        (item) => (item.reviewer = users.find((user) => user.id === item.reviewerId)),
+      );
+      item.request.user = users.find((user) => user.id === item.request.userId);
+      return item;
+    });
+    return joinedData;
+  };
+
+  const isApprovedBy = (obj) => {
+    const { reviews } = obj.request;
+    const approved = reviews.reduce((sum, item) => {
+      if (item.isApproved) {
+        return `${sum} ${item.reviewer.firstName.concat(' ', item.reviewer.lastName)},`;
+      }
+    }, '');
+    return approved ? `Already approved by: ${approved}` : '';
+  };
+
+  const handleFilter = (fromDate, toDate, name, typeId) => {
+    setLoading(true);
+    getMyReviewsByFilter(fromDate, toDate, name, typeId).then(({ data }) => {
+      const isNew = data.filter((item) => item.isApproved === null);
+      setData(isNew);
+      setLoading(false);
+    });
+  };
+
   useEffect(() => {
-    //uploading new data
-    //axios.get(url).then(({data}) => setData(data)).catch(err => console.log(err));
-    setData(testData);
-    setLoading(false);
+    setLoading(true);
+
+    async function loadUsers() {
+      await getUsers('', '').then(({ data }) => {
+        setUsers(data);
+      });
+      await loadReviews();
+    }
+
+    async function loadReviews() {
+      await getMyReviews().then(({ data }) => {
+        const isNew = data.filter((item) => item.isApproved === null);
+        setData(isNew);
+        setLoading(false);
+      });
+    }
+    loadUsers();
   }, []);
 
   return (
     <div>
-      <ReviewsFilter types={types} isSendingRequest={isSendingRequest} />
+      <ReviewsFilter
+        types={types}
+        isSendingRequest={isSendingRequest}
+        handleFilter={handleFilter}
+      />
       {/* <ReviewsTable data={testData} headCells={headCellsNew} actions={true} /> */}
       <div className={classes.root}>
         {isLoading ? (
@@ -208,7 +195,7 @@ function NewRequests() {
               aria-label="enhanced table">
               <EnhancedTableHead headCells={headCellsNew} actions={true} />
               <TableBody>
-                {data
+                {joinData()
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((item, index) => {
                     const labelId = `enhanced-table-${index}`;
@@ -225,13 +212,16 @@ function NewRequests() {
                           id={labelId}
                           scope="row"
                           padding="none">
-                          {item.firstName.concat(' ', item.lastName)}
+                          {item.request.user.firstName.concat(' ', item.request.user.lastName)}
                         </TableCell>
-                        <TableCell align="center">{item.role}</TableCell>
-                        <TableCell align="center">{item.type}</TableCell>
-                        <TableCell align="center">{item.dates}</TableCell>
-                        <TableCell align="center">{item.comments}</TableCell>
-                        <TableCell align="center">{item.details}</TableCell>
+                        <TableCell align="center">{item.request.user.role}</TableCell>
+                        <TableCell align="center">{types[item.request.typeId].title}</TableCell>
+                        <TableCell align="center">
+                          {convertDate(item.request.startDate)} -{' '}
+                          {convertDate(item.request.endDate)}
+                        </TableCell>
+                        <TableCell align="center">{item.request.comment}</TableCell>
+                        <TableCell align="center">{isApprovedBy(item)}</TableCell>
                         <TableCell align="center">
                           <Button
                             className="reviews-table__ok-btn"

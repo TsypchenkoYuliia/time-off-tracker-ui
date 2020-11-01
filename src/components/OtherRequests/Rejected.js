@@ -14,6 +14,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 import ReviewsTable from './ReviewsTable';
 import ReviewsFilter from './ReviewsFilter';
+import { getMyReviews, getUsers, getMyReviewsByFilter } from '../Axios';
+import { convertDate } from '../../config';
 
 const types = [
   {
@@ -151,6 +153,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Rejected() {
   const [data, setData] = useState(null);
+  const [users, setUsers] = useState(null);
   const [isSendingRequest, setRequestSending] = useState(false);
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
@@ -185,15 +188,50 @@ function Rejected() {
     setRequestSending(true);
   };
 
+  const joinData = () => {
+    const joinedData = data.map((item) => {
+      item.request.user = users.find((user) => user.id === item.request.userId);
+      return item;
+    });
+    return joinedData;
+  };
+
+  const handleFilter = (fromDate, toDate, name, typeId) => {
+    setLoading(true);
+    getMyReviewsByFilter(fromDate, toDate, name, typeId).then(({ data }) => {
+      const isNew = data.filter((item) => item.isApproved === false);
+      setData(isNew);
+      setLoading(false);
+    });
+  };
+
   useEffect(() => {
-    //uploading new data
-    setData(testData);
-    setLoading(false);
+    setLoading(true);
+
+    async function loadUsers() {
+      await getUsers('', '').then(({ data }) => {
+        setUsers(data);
+      });
+      await loadReviews();
+    }
+
+    async function loadReviews() {
+      await getMyReviews().then(({ data }) => {
+        const isNew = data.filter((item) => item.isApproved === false);
+        setData(isNew);
+        setLoading(false);
+      });
+    }
+    loadUsers();
   }, []);
 
   return (
     <div>
-      <ReviewsFilter types={types} isSendingRequest={isSendingRequest} />
+      <ReviewsFilter
+        types={types}
+        isSendingRequest={isSendingRequest}
+        handleFilter={handleFilter}
+      />
       {/* <ReviewsTable data={testData} headCells={headCellsNew} /> */}
       <div className={classes.root}>
         {isLoading ? (
@@ -207,7 +245,7 @@ function Rejected() {
               aria-label="enhanced table">
               <EnhancedTableHead headCells={headCellsNew} />
               <TableBody>
-                {data
+                {joinData()
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((item, index) => {
                     const labelId = `enhanced-table-${index}`;
@@ -224,13 +262,16 @@ function Rejected() {
                           id={labelId}
                           scope="row"
                           padding="none">
-                          {item.firstName.concat(' ', item.lastName)}
+                          {item.request.user.firstName.concat(' ', item.request.user.lastName)}
                         </TableCell>
-                        <TableCell align="center">{item.role}</TableCell>
-                        <TableCell align="center">{item.type}</TableCell>
-                        <TableCell align="center">{item.dates}</TableCell>
-                        <TableCell align="center">{item.comments}</TableCell>
-                        <TableCell align="center">{item.details}</TableCell>
+                        <TableCell align="center">{item.request.user.role}</TableCell>
+                        <TableCell align="center">{types[item.request.typeId].title}</TableCell>
+                        <TableCell align="center">
+                          {convertDate(item.request.startDate)} -{' '}
+                          {convertDate(item.request.endDate)}
+                        </TableCell>
+                        <TableCell align="center">{item.request.comment}</TableCell>
+                        <TableCell align="center">{item.comment}</TableCell>
                       </TableRow>
                     );
                   })}

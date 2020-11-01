@@ -29,7 +29,13 @@ export const getMyRequests = () => {
 };
 
 export const getMyReviews = () => {
-  return axiosApi.get('user/reviews');
+  return axiosApi.get(`user/reviews`);
+};
+
+export const getMyReviewsByFilter = (startDate, endDate, name, typeId) => {
+  return axiosApi.get(
+    `user/reviews?startDate=${startDate}&endDate=${endDate}&name=${name}&typeId=${typeId}`,
+  );
 };
 
 export const postNewRequest = (newRequest) => {

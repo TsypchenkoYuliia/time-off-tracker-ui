@@ -12,6 +12,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { getMyRequests, getMyReviews } from '../components/Axios';
 import { Context } from '../Context';
 import NewRequest from './NewRequest';
+import { convertDate } from '../config';
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -101,8 +102,7 @@ function Home() {
     if (context.role !== 'Employee') {
       async function getReviews() {
         await getMyReviews().then(({ data }) => {
-          const subData = data.slice(0, 3);
-          console.log(subData);
+          const subData = data.filter((item) => item.isApproved === null);
           setReviews(subData);
         });
         setLoading(false);
@@ -156,8 +156,8 @@ function Home() {
               </TableHead>
               <TableBody>
                 {requests.map((request) => {
-                  const startDate = request.startDate;
-                  const endDate = request.endDate;
+                  const startDate = convertDate(request.startDate);
+                  const endDate = convertDate(request.endDate);
                   return (
                     <StyledTableRow key={request.id}>
                       <StyledTableCell component="th" scope="row">
@@ -205,20 +205,26 @@ function Home() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {reviews.map((review) => (
-                      <StyledTableRow key={review.id}>
-                        <StyledTableCell component="th" scope="row">
-                          {states[review.request.stateId]}
-                        </StyledTableCell>
-                        <StyledTableCell align="left">
-                          {types[review.request.typeId].title}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          {review.request.startDate} - {review.request.endDate}
-                        </StyledTableCell>
-                        <StyledTableCell align="left">{review.request.comment}</StyledTableCell>
-                      </StyledTableRow>
-                    ))}
+                    {reviews.map((review) => {
+                      const { request } = review;
+                      const startDate = convertDate(request.startDate);
+                      const endDate = convertDate(request.endDate);
+
+                      return (
+                        <StyledTableRow key={review.id}>
+                          <StyledTableCell component="th" scope="row">
+                            {states[request.stateId]}
+                          </StyledTableCell>
+                          <StyledTableCell align="left">
+                            {types[request.typeId].title}
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            {startDate} - {endDate}
+                          </StyledTableCell>
+                          <StyledTableCell align="left">{request.comment}</StyledTableCell>
+                        </StyledTableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </TableContainer>

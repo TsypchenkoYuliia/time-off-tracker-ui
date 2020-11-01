@@ -16,9 +16,9 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import { SingleDatePicker } from 'react-dates';
-import moment from 'moment';
 
 import { getMyRequests } from '../components/Axios';
+import { convertDate } from '../config';
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -197,28 +197,10 @@ function MyRequests() {
                 </StyledTableCell>
               </TableRow>
             </TableHead>
-            {/* <TableBody>
-              {rows.map((row) => (
-                <StyledTableRow key={row.state}>
-                  <StyledTableCell component="th" scope="row">
-                    {row.state}
-                  </StyledTableCell>
-                  <StyledTableCell align="left">{row.type}</StyledTableCell>
-                  <StyledTableCell align="center">{row.date}</StyledTableCell>
-                  <StyledTableCell align="left">{row.comment}</StyledTableCell>
-                  <StyledTableCell align="left">{row.description}</StyledTableCell>
-                  <StyledTableCell align="center">
-                    <Button variant="contained" color="inherit">
-                      View
-                    </Button>
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody> */}
             <TableBody>
               {data.map((item) => {
-                const startDate = moment(item.startDate).format('MM/DD/YYYY').toString();
-                const endDate = moment(item.endDate).format('MM/DD/YYYY').toString();
+                const startDate = convertDate(item.startDate);
+                const endDate = convertDate(item.endDate);
                 return (
                   <StyledTableRow key={item.id}>
                     <StyledTableCell component="th" scope="row">

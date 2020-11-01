@@ -1,4 +1,5 @@
 import axios from 'axios';
+import moment from 'moment';
 
 const BASE_URL = 'https://localhost:44381/';
 
@@ -11,4 +12,8 @@ axiosApi.interceptors.request.use((config) => {
   return config;
 });
 
-export { BASE_URL, axiosApi };
+const convertDate = (date) => {
+  return moment(date).format('MM/DD/YYYY').toString();
+};
+
+export { BASE_URL, axiosApi, convertDate };
