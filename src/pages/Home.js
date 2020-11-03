@@ -70,10 +70,10 @@ function Home() {
   // }
 
   useEffect(() => {
+    setLoading(true);
     async function getRequests() {
       await getMyRequests().then(({ data }) => {
         const subData = data.slice(0, 3);
-        console.log(subData);
         setRequests(subData);
         if (context.role === 'Employee') {
           setLoading(false);
