@@ -14,88 +14,10 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 import ReviewsTable from './ReviewsTable';
 import ReviewsFilter from './ReviewsFilter';
-import { getMyReviews, getUsers, getMyReviewsByFilter } from '../Axios';
+import { loadData } from './LoadReviewsData';
+import { getMyReviewsByFilter } from '../Axios';
 import { convertDate } from '../../config';
-
-const types = [
-  {
-    id: 0,
-    title: 'Any',
-  },
-  {
-    id: 1,
-    title: 'Administrative force majeure leave',
-  },
-  { id: 2, title: 'Administrative leave' },
-  { id: 3, title: 'Social leave' },
-  { id: 4, title: 'Sick leave (no documents)' },
-  { id: 5, title: 'Sick leave (with documents)' },
-  { id: 6, title: 'Study leave' },
-  { id: 7, title: 'Paid leave' },
-];
-
-const testData = [
-  {
-    id: 1,
-    firstName: 'John',
-    lastName: 'Smith',
-    role: 'Manager',
-    type: 'Administrative leave',
-    dates: '10/10/2020-10/11/2020',
-    comments: 'pls',
-    details: 'Already approved by: Accounting',
-  },
-  {
-    id: 2,
-    firstName: 'John2',
-    lastName: 'Smith2',
-    role: 'Employee',
-    type: 'Administrative leave',
-    dates: '10/10/2020-10/11/2020',
-    comments: 'help',
-    details: 'Already approved by: John Smith',
-  },
-  {
-    id: 3,
-    firstName: 'John3',
-    lastName: 'Smith3',
-    role: 'Manager',
-    type: 'Study leave',
-    dates: '10/10/2020-10/11/2020',
-    comments: 'me',
-    details: 'Already approved by: Accounting',
-  },
-  {
-    id: 4,
-    firstName: 'John4',
-    lastName: 'Smith4',
-    role: 'Employee',
-    type: 'Administrative leave',
-    dates: '10/10/2020-10/11/2020',
-    comments: 'someone',
-    details: 'Already approved by: Accounting',
-  },
-  {
-    id: 5,
-    firstName: 'John5',
-    lastName: 'Smith5',
-    role: 'Manager',
-    type: 'Study leave',
-    dates: '10/10/2020-10/11/2020',
-    comments: 'there',
-    details: 'Already approved by: Accounting',
-  },
-  {
-    id: 6,
-    firstName: 'John6',
-    lastName: 'Smith6',
-    role: 'Employee',
-    type: 'Administrative leave',
-    dates: '10/10/2020-10/11/2020',
-    comments: 'are',
-    details: 'Already approved by: Accounting',
-  },
-];
+import { types } from '../../constants';
 
 const headCellsNew = [
   { id: 'From', label: 'From' },
@@ -205,24 +127,22 @@ function Rejected() {
     });
   };
 
+  const getAllUsers = (data) => {
+    setUsers(data);
+  };
+
+  const getData = (data) => {
+    setData(data);
+  };
+
+  const uploaded = () => {
+    setLoading(false);
+  };
+
   useEffect(() => {
     setLoading(true);
 
-    async function loadUsers() {
-      await getUsers('', '').then(({ data }) => {
-        setUsers(data);
-      });
-      await loadReviews();
-    }
-
-    async function loadReviews() {
-      await getMyReviews().then(({ data }) => {
-        const isNew = data.filter((item) => item.isApproved === false);
-        setData(isNew);
-        setLoading(false);
-      });
-    }
-    loadUsers();
+    loadData(getAllUsers, getData, uploaded, false);
   }, []);
 
   return (

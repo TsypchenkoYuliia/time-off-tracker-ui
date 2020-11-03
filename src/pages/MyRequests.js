@@ -19,6 +19,7 @@ import { SingleDatePicker } from 'react-dates';
 
 import { getMyRequests } from '../components/Axios';
 import { convertDate } from '../config';
+import { types, states } from '../constants';
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -42,40 +43,6 @@ const StyledTableRow = withStyles((theme) => ({
     },
   },
 }))(TableRow);
-
-function createData(state, type, date, comment, description) {
-  return { state, type, date, comment, description };
-}
-
-const rows = [
-  createData(
-    'In progress',
-    'Paid Leave',
-    '10/10/2020 - 12/10/2020',
-    'Please',
-    'Already approved by: Accounting',
-  ),
-  createData('Approved', 'Sick Leave', '10/10/2020 - 12/10/2020', 'Please', ''),
-  createData('Rejected', 'Administrative Leave', '10/10/2020 - 12/10/2020', 'Please', ''),
-];
-
-const states = ['Any', 'New', 'In progress', 'Approved', 'Rejected'];
-const types = [
-  {
-    id: 0,
-    title: 'Any',
-  },
-  {
-    id: 1,
-    title: 'Administrative force majeure leave',
-  },
-  { id: 2, title: 'Administrative leave' },
-  { id: 3, title: 'Social leave' },
-  { id: 4, title: 'Sick leave (no documents)' },
-  { id: 5, title: 'Sick leave (with documents)' },
-  { id: 6, title: 'Study leave' },
-  { id: 7, title: 'Paid leave' },
-];
 
 function MyRequests() {
   const [data, setData] = useState(null);

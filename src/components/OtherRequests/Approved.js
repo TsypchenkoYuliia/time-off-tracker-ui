@@ -14,27 +14,10 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 import ReviewsTable from './ReviewsTable';
 import ReviewsFilter from './ReviewsFilter';
-import { getMyReviews, getUsers, getMyReviewsByFilter } from '../Axios';
+import { loadData } from './LoadReviewsData';
+import { getMyReviewsByFilter } from '../Axios';
 import { convertDate } from '../../config';
-
-const types = [
-  {
-    id: 0,
-    title: 'Any',
-  },
-  {
-    id: 1,
-    title: 'Administrative force majeure leave',
-  },
-  { id: 2, title: 'Administrative leave' },
-  { id: 3, title: 'Social leave' },
-  { id: 4, title: 'Sick leave (no documents)' },
-  { id: 5, title: 'Sick leave (with documents)' },
-  { id: 6, title: 'Study leave' },
-  { id: 7, title: 'Paid leave' },
-];
-
-const states = ['Any', 'New', 'In progress', 'Approved', 'Rejected'];
+import { types, states } from '../../constants';
 
 const headCellsNew = [
   { id: 'From', label: 'From' },
@@ -158,24 +141,22 @@ function Approved() {
     return approved ? `Already approved by: ${approved}` : '';
   };
 
+  const getAllUsers = (data) => {
+    setUsers(data);
+  };
+
+  const getData = (data) => {
+    setData(data);
+  };
+
+  const uploaded = () => {
+    setLoading(false);
+  };
+
   useEffect(() => {
     setLoading(true);
 
-    async function loadUsers() {
-      await getUsers('', '').then(({ data }) => {
-        setUsers(data);
-      });
-      await loadReviews();
-    }
-
-    async function loadReviews() {
-      await getMyReviews().then(({ data }) => {
-        const isNew = data.filter((item) => item.isApproved === true);
-        setData(isNew);
-        setLoading(false);
-      });
-    }
-    loadUsers();
+    loadData(getAllUsers, getData, uploaded, true);
   }, []);
 
   return (

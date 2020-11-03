@@ -13,6 +13,7 @@ import { getMyRequests, getMyReviews } from '../components/Axios';
 import { Context } from '../Context';
 import NewRequest from './NewRequest';
 import { convertDate } from '../config';
+import { types, states } from '../constants';
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -50,24 +51,6 @@ const rows = [
   ),
   createData('Approved', 'Sick Leave', '10/10/2020 - 12/10/2020', ''),
   createData('Rejected', 'Administrative Leave', '10/10/2020 - 12/10/2020', ''),
-];
-
-const states = ['Any', 'New', 'In progress', 'Approved', 'Rejected'];
-const types = [
-  {
-    id: 0,
-    title: 'Any',
-  },
-  {
-    id: 1,
-    title: 'Administrative force majeure leave',
-  },
-  { id: 2, title: 'Administrative leave' },
-  { id: 3, title: 'Social leave' },
-  { id: 4, title: 'Sick leave (no documents)' },
-  { id: 5, title: 'Sick leave (with documents)' },
-  { id: 6, title: 'Study leave' },
-  { id: 7, title: 'Paid leave' },
 ];
 
 function Home() {

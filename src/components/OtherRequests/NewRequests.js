@@ -14,25 +14,10 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 //import ReviewsTable from './ReviewsTable';
 import ReviewsFilter from './ReviewsFilter';
-import { getMyReviews, getMyReviewsByFilter, getUsers } from '../Axios';
+import { loadData } from './LoadReviewsData';
+import { getMyReviewsByFilter } from '../Axios';
 import { convertDate } from '../../config';
-
-const types = [
-  {
-    id: 0,
-    title: 'Any',
-  },
-  {
-    id: 1,
-    title: 'Administrative force majeure leave',
-  },
-  { id: 2, title: 'Administrative leave' },
-  { id: 3, title: 'Social leave' },
-  { id: 4, title: 'Sick leave (no documents)' },
-  { id: 5, title: 'Sick leave (with documents)' },
-  { id: 6, title: 'Study leave' },
-  { id: 7, title: 'Paid leave' },
-];
+import { types } from '../../constants';
 
 const headCellsNew = [
   { id: 'From', label: 'From' },
@@ -155,24 +140,22 @@ function NewRequests() {
     });
   };
 
+  const getAllUsers = (data) => {
+    setUsers(data);
+  };
+
+  const getData = (data) => {
+    setData(data);
+  };
+
+  const uploaded = () => {
+    setLoading(false);
+  };
+
   useEffect(() => {
     setLoading(true);
 
-    async function loadUsers() {
-      await getUsers('', '').then(({ data }) => {
-        setUsers(data);
-      });
-      await loadReviews();
-    }
-
-    async function loadReviews() {
-      await getMyReviews().then(({ data }) => {
-        const isNew = data.filter((item) => item.isApproved === null);
-        setData(isNew);
-        setLoading(false);
-      });
-    }
-    loadUsers();
+    loadData(getAllUsers, getData, uploaded, null);
   }, []);
 
   return (
