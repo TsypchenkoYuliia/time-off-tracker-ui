@@ -50,3 +50,10 @@ export const postNewRequest = (newRequest) => {
     userId: userId,
   });
 };
+
+export const actionReview = (reviewId, isApproved, comment = '') => {
+  const body = isApproved
+    ? { isApproved: isApproved }
+    : { isApproved: isApproved, comment: comment };
+  return axiosApi.put(`user/reviews/${reviewId}`, body);
+};

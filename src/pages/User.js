@@ -5,6 +5,7 @@ import { Button, ButtonGroup } from '@material-ui/core';
 import Home from './Home';
 import MyRequests from './MyRequests';
 import OtherRequests from './OtherRequests';
+import RequestActions from '../components/OtherRequests/RequestActions';
 
 import { Context } from '../Context';
 import NewRequest from './NewRequest';
@@ -102,6 +103,20 @@ function User() {
             render={({ location }) =>
               context.token ? (
                 <NewRequest isOpen={true}></NewRequest>
+              ) : (
+                <Redirect
+                  to={{
+                    pathname: '/login',
+                    state: { from: location },
+                  }}
+                />
+              )
+            }></Route>
+          <Route
+            path="/other_requests/actions"
+            render={({ location }) =>
+              context.token ? (
+                <RequestActions />
               ) : (
                 <Redirect
                   to={{

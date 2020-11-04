@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { Link, useHistory } from 'react-router-dom';
 import {
   Button,
   Table,
@@ -81,6 +82,7 @@ function NewRequests() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [isLoading, setLoading] = useState(true);
+  let history = useHistory();
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -210,13 +212,21 @@ function NewRequests() {
                             className="reviews-table__ok-btn"
                             variant="contained"
                             style={{ marginRight: 10 }}
-                            onClick={() => {}}>
+                            onClick={() => {
+                              history.push(
+                                `/other_requests/actions?review=${item.id}&action=approve`,
+                              );
+                            }}>
                             Accept
                           </Button>
                           <Button
                             className="reviews-table__cancel-btn"
                             variant="contained"
-                            onClick={() => {}}>
+                            onClick={() => {
+                              history.push(
+                                `/other_requests/actions?review=${item.id}&action=reject`,
+                              );
+                            }}>
                             Reject
                           </Button>
                         </TableCell>

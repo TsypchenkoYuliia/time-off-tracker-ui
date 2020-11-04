@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { TextField, Typography, Button, InputAdornment, IconButton } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
@@ -62,7 +62,7 @@ function Login() {
         setContext({ userId: data.userId, role: data.role, token: data.token });
         history.replace(
           location.state
-            ? location.state.from.pathname
+            ? location.state.from.pathname + location.state.from.search
             : data.role === 'Admin'
             ? '/admin'
             : '/home',
@@ -76,6 +76,10 @@ function Login() {
   };
 
   if (context.role) history.push('/');
+
+  useEffect(() => {
+    console.log(location);
+  }, []);
 
   return (
     <div>

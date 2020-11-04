@@ -118,7 +118,7 @@ function Home() {
           </Button>
         </div>
 
-        {isLoading ? (
+        {isLoading && !requests ? (
           <CircularProgress />
         ) : requests.length > 0 ? (
           <TableContainer>
