@@ -4,7 +4,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Button, Select, MenuItem, FormControl, InputLabel } from '@material-ui/core';
-import axios from 'axios';
+import moment from 'moment';
+
 import { Context } from '../Context';
 import { postNewRequest, getAllManagers } from '../components/Axios';
 
@@ -49,6 +50,7 @@ function NewRequest({ isOpen, onClose }) {
   const [toDate, setToDate] = useState(null);
   const [pmanager, setPManager] = useState(['']);
   const [duration, setDuration] = useState(2);
+  const [data, setData] = useState(null);
 
   const handleComment = (e) => {
     setComment(e.target.value);
@@ -69,28 +71,27 @@ function NewRequest({ isOpen, onClose }) {
   const handleSendRequest = async () => {
     setRequestSending(true);
 
-    //real request
-    // await postNewRequest({
-    //   TypeId: leaveType,
-    //   StartDate: fromDate,
-    //   EndDate: toDate,
-    //   ReviewersIds: pmanager,
-    //   HasAccountingReviewPassed: false, //лишнее
-    //   Comment: comment,
-    //   State: 'New',
-    //   DurationId: duration,
-    //   UserId: context.userId,
-    // })
-    //   .then(({ data }) => console.log(data))
-    //   .catch((err) => {
-    //     console.log(err);
-    //     console.log(err.response.data);
-    //   });
+    const reviewerIds = data
+      .filter((item) => pmanager.includes(item.firstName.concat(' ', item.lastName)))
+      .map((item) => {
+        return item.id;
+      });
 
-    await axios
-      .post('https://url')
-      .then((data) => {})
-      .catch((err) => {});
+    await postNewRequest({
+      leaveType,
+      fromDate: moment(fromDate._d).format('YYYY-MM-DD').toString(),
+      toDate: moment(fromDate._d).format('YYYY-MM-DD').toString(),
+      pmanager: [1, ...reviewerIds],
+      comment,
+      duration,
+      userId: context.userId,
+    })
+      .then(({ data }) => console.log(data))
+      .catch((err) => {
+        console.log(err);
+        console.log(err.response.data);
+      });
+
     setRequestSending(false);
   };
 
@@ -101,8 +102,10 @@ function NewRequest({ isOpen, onClose }) {
   useEffect(() => {
     async function getAllData() {
       await getAllManagers().then(({ data }) => {
-        //закомментировал для корректной работы с локальным беком
-        //prManagers = data;
+        setData(data);
+        prManagers = data.map((item) => {
+          return item.firstName.concat(' ', item.lastName);
+        });
       });
     }
     getAllData();
@@ -189,4 +192,4 @@ function NewRequest({ isOpen, onClose }) {
   );
 }
 
-export default NewRequest;
+export default React.memo(NewRequest);

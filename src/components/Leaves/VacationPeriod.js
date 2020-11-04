@@ -3,18 +3,27 @@ import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import { SingleDatePicker } from 'react-dates';
 
-function VacationPeriod({ fromDate, changeFromDate, toDate, changeToDate, isSendingRequest }) {
+function VacationPeriod({
+  fromDate,
+  changeFromDate,
+  toDate,
+  changeToDate,
+  isSendingRequest,
+  disablePeriod,
+  showAllDays,
+}) {
   const [focusedFrom, setFocusFrom] = useState(false);
   const [focusedTo, setFocusTo] = useState(false);
 
   const getDateDifference = Math.round(toDate - fromDate) / (1000 * 60 * 60 * 24);
+
+  const showPastDays = () => false;
 
   return (
     <div
       style={{
         display: 'flex',
         flexDirection: 'row',
-        marginBottom: 20,
         alignItems: 'center',
       }}>
       <SingleDatePicker
@@ -22,6 +31,7 @@ function VacationPeriod({ fromDate, changeFromDate, toDate, changeToDate, isSend
         disabled={isSendingRequest}
         showClearDate
         placeholder="From"
+        isOutsideRange={showAllDays && showPastDays}
         isDayBlocked={(day) => (toDate ? day > toDate : null)}
         numberOfMonths={1}
         date={fromDate}
@@ -35,6 +45,7 @@ function VacationPeriod({ fromDate, changeFromDate, toDate, changeToDate, isSend
         disabled={isSendingRequest}
         showClearDate
         placeholder="To"
+        isOutsideRange={showAllDays && showPastDays}
         isDayBlocked={(day) => (fromDate ? day < fromDate : null)}
         numberOfMonths={1}
         date={toDate}
@@ -43,7 +54,7 @@ function VacationPeriod({ fromDate, changeFromDate, toDate, changeToDate, isSend
         onFocusChange={({ focused }) => setFocusTo(focused)}
       />
 
-      {fromDate && toDate && getDateDifference >= 0 ? (
+      {!disablePeriod && fromDate && toDate && getDateDifference >= 0 ? (
         <h4 style={{ paddingTop: 3 }}>
           {getDateDifference + 1} vacation {getDateDifference === 0 ? 'day' : 'days'}
         </h4>
@@ -52,4 +63,4 @@ function VacationPeriod({ fromDate, changeFromDate, toDate, changeToDate, isSend
   );
 }
 
-export default VacationPeriod;
+export default React.memo(VacationPeriod);

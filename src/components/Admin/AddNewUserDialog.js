@@ -4,9 +4,10 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { TextField, Button, Select, MenuItem, FormControl, InputLabel } from '@material-ui/core';
+
 import { newUser } from '../Axios';
 
-export default function AddNewUser({ isOpen, onClose, roles }) {
+export default function AddNewUser({ isOpen, onClose, roles, updateUsers }) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [role, setRole] = useState(0);
@@ -19,7 +20,7 @@ export default function AddNewUser({ isOpen, onClose, roles }) {
     password: '',
   });
 
-  const handleAddNewUser = () => {
+  const handleAddNewUser = async () => {
     let error = { ...errors };
 
     error.firstName = firstName !== '' ? '' : 'no empty First Name';
@@ -37,15 +38,16 @@ export default function AddNewUser({ isOpen, onClose, roles }) {
       return;
     }
 
-    newUser({
-      login: 'nill.smith@admin.com',
-      email: email,
-      password: password,
+    const user = {
       firstName: firstName,
       lastName: lastName,
+      email: email,
+      password: password,
       role: roles[role],
-      vacations: [],
-    }).then(() => onClose);
+    };
+
+    await newUser(user).then(() => onClose());
+    updateUsers();
   };
 
   return (

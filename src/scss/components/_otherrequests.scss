@@ -1,0 +1,22 @@
+.MuiTableCell-root.MuiTableCell-head.reviews__table-cell {
+  font-size: 18px;
+}
+
+.reviews__users-table-row {
+  height: 81px;
+
+  .MuiTableCell-root.MuiTableCell-body {
+    font-size: 16px;
+  }
+}
+
+.MuiButton-contained.reviews-table__ok-btn:hover {
+  background-color: #00c903;
+}
+
+.MuiButton-contained.reviews-table__cancel-btn:hover {
+  background-color: #f50057;
+  .MuiButton-label {
+    color: white;
+  }
+}

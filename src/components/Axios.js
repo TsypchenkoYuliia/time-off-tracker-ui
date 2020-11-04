@@ -1,44 +1,52 @@
-import axios from 'axios';
-
-import { BASE_URL } from '../config';
+import { axiosApi } from '../config';
 
 export const newUser = (newUser) => {
-  return axios.post(BASE_URL + 'users', newUser); //endpoint in api - accounts
+  return axiosApi.post('accounts', newUser);
+};
+
+export const getUsers = (name, role) => {
+  return axiosApi.get(`users?name=${name}&role=${role}`);
 };
 
 export const getUserById = (id) => {
-  return axios.get(BASE_URL + 'users/' + id);
+  return axiosApi.get('users/' + id);
 };
 
 export const deleteUser = (id) => {
-  return axios.delete(BASE_URL + 'users/' + id);
+  return axiosApi.delete('users/' + id);
 };
 
-export const changeUserRole = (id, changedUser) => {
-  return axios.put(BASE_URL + 'users/' + id, changedUser);
+export const changeUserRole = (changedUser) => {
+  return axiosApi.put('users/', changedUser);
 };
 
 export const getAllManagers = () => {
-  return axios.get(BASE_URL + 'users?role=Manager');
+  return axiosApi.get('users?role=Manager');
 };
 
-export const postNewRequest = ({
-  userId,
-  leaveType,
-  comment,
-  fromDate,
-  toDate,
-  pmanager,
-  duration,
-}) => {
-  return axios.post(BASE_URL + 'requests', {
-    TypeId: leaveType,
-    StartDate: fromDate,
-    EndDate: toDate,
-    ReviewersIds: pmanager,
-    Comment: comment,
-    //State: 'New', оставлю для себя, уберу при добавлении интерсепции и после теста реального бэка
-    DurationId: duration,
-    UserId: userId,
+export const getMyRequests = () => {
+  return axiosApi.get('user/requests');
+};
+
+export const getMyReviews = () => {
+  return axiosApi.get(`user/reviews`);
+};
+
+export const getMyReviewsByFilter = (startDate, endDate, name, typeId) => {
+  return axiosApi.get(
+    `user/reviews?startDate=${startDate}&endDate=${endDate}&name=${name}&typeId=${typeId}`,
+  );
+};
+
+export const postNewRequest = (newRequest) => {
+  const { leaveType, fromDate, toDate, pmanager, comment, duration, userId } = newRequest;
+  return axiosApi.post('requests', {
+    typeId: leaveType,
+    startDate: fromDate,
+    endDate: toDate,
+    reviewsIds: pmanager,
+    comment: comment,
+    durationId: duration,
+    userId: userId,
   });
 };

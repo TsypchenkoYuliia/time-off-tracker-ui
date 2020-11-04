@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
 import {
   Button,
@@ -24,7 +23,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import ConfirmationDialog from './ConfirmationDialog';
 import AddNewUserDialog from './AddNewUserDialog';
-import { deleteUser, changeUserRole, getUserById } from '../Axios';
+import { deleteUser, changeUserRole } from '../Axios';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -54,14 +53,13 @@ function stableSort(array, comparator) {
 
 const headCells = [
   { id: 'firstName', numeric: true, disablePadding: true, label: 'Name' },
-  { id: 'login', numeric: false, disablePadding: false, label: 'Login' },
-  { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
+  { id: 'email', numeric: false, disablePadding: false, label: 'Username' },
   { id: 'role', numeric: false, disablePadding: false, label: 'Role' },
   { id: 'button', numeric: false, disablePadding: false, label: '' },
 ];
 
 function EnhancedTableHead(props) {
-  const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+  const { classes, order, orderBy, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -96,7 +94,6 @@ function EnhancedTableHead(props) {
 
 EnhancedTableHead.propTypes = {
   classes: PropTypes.object.isRequired,
-  numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   onSelectAllClick: PropTypes.func.isRequired,
   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
@@ -124,15 +121,12 @@ const useToolbarStyles = makeStyles((theme) => ({
   },
 }));
 
-const EnhancedTableToolbar = ({ numSelected, roles }) => {
+const EnhancedTableToolbar = ({ roles, updateUsers }) => {
   const classes = useToolbarStyles();
   const [openNewUser, setOpenNewUser] = React.useState(false);
 
   return (
-    <Toolbar
-      className={clsx(classes.root, {
-        [classes.highlight]: numSelected > 0,
-      })}>
+    <Toolbar className={classes.root}>
       <h2 className="users-table__title">List of users</h2>
 
       <>
@@ -150,14 +144,11 @@ const EnhancedTableToolbar = ({ numSelected, roles }) => {
           isOpen={openNewUser}
           onClose={() => setOpenNewUser(false)}
           roles={roles}
+          updateUsers={updateUsers}
         />
       </>
     </Toolbar>
   );
-};
-
-EnhancedTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired,
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -181,7 +172,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function EnhancedTable({ data, roles }) {
+export default function EnhancedTable({ data, roles, updateUsers }) {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState(null);
@@ -222,30 +213,30 @@ export default function EnhancedTable({ data, roles }) {
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
-  const handleDelete = (id) => {
-    deleteUser(id).then(() => setOpen(false));
+  const handleDelete = async (id) => {
+    await deleteUser(id).then(() => setOpen(false));
+    updateUsers();
   };
 
-  const handleChangeRole = (id, item) => {
+  const handleChangeRole = async (id, item) => {
     if (role === roles.indexOf(item.role)) {
       setEditing(null);
       return;
     }
 
-    changeUserRole(id, {
-      login: item.login,
-      email: item.email,
-      password: item.password,
+    await changeUserRole({
+      id: item.id,
       firstName: item.firstName,
       lastName: item.lastName,
+      userName: item.userName,
       role: roles[role],
-      vacations: item.vacations,
-    });
+    }).then(() => setEditing(false));
+    updateUsers();
   };
 
   return (
     <div className={classes.root}>
-      <EnhancedTableToolbar roles={roles} />
+      <EnhancedTableToolbar roles={roles} updateUsers={updateUsers} />
 
       <TableContainer>
         <Table
@@ -287,10 +278,9 @@ export default function EnhancedTable({ data, roles }) {
                       </Tooltip>
                     </TableCell>
                     <TableCell component="th" id={labelId} scope="row" padding="none">
-                      {item.firstName.concat(' ', item.lastName)}
+                      {item.firstName ? item.firstName.concat(' ', item.lastName) : ''}
                     </TableCell>
-                    <TableCell align="center">{item.login}</TableCell>
-                    <TableCell align="center">{item.email}</TableCell>
+                    <TableCell align="center">{item.userName}</TableCell>
 
                     <TableCell align="center">
                       {isEditing === item.id ? (

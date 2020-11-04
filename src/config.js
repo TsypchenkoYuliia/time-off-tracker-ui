@@ -1,15 +1,19 @@
 import axios from 'axios';
-import { Context } from './Context';
+import moment from 'moment';
 
-const BASE_URL = 'http://localhost:3001/';
+const BASE_URL = 'https://localhost:44381/';
 
 const axiosApi = axios.create({
   baseURL: BASE_URL,
 });
 
-axios.interceptors.request.use((config) => {
-  config.headers.Authorization = `Bearer ${Context.token}`;
+axiosApi.interceptors.request.use((config) => {
+  config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;
   return config;
 });
 
-export { BASE_URL, axiosApi };
+const convertDate = (date) => {
+  return moment(date).format('MM/DD/YYYY').toString();
+};
+
+export { BASE_URL, axiosApi, convertDate };

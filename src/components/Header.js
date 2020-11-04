@@ -28,7 +28,7 @@ function Header() {
   };
 
   const toHomePage = () => {
-    history.push('/');
+    history.push('/home');
   };
 
   useEffect(() => {
