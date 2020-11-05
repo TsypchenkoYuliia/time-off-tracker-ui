@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { useHistory } from 'react-router-dom';
 import {
   Button,
   Table,
@@ -11,7 +12,26 @@ import {
   TableRow,
 } from '@material-ui/core';
 
-function EnhancedTableHead({ headCells, actions }) {
+import { convertDate } from '../../config';
+import { types } from '../../constants';
+
+const headCells = [
+  { id: 'From', label: 'From' },
+  { id: 'Role', label: 'Role' },
+  { id: 'Type', label: 'Type' },
+  { id: 'Dates', label: 'Dates' },
+  { id: 'Comments', label: 'Request Comments' },
+  { id: 'Details', label: 'State Details' },
+];
+
+const headCellsShort = [
+  { id: 'From', label: 'From' },
+  { id: 'Type', label: 'Type' },
+  { id: 'Dates', label: 'Dates' },
+  { id: 'Comments', label: 'Request Comments' },
+];
+
+function EnhancedTableHead({ headCells }) {
   return (
     <TableHead>
       <TableRow>
@@ -24,11 +44,10 @@ function EnhancedTableHead({ headCells, actions }) {
             {headCell.label}
           </TableCell>
         ))}
-        {actions ? (
-          <TableCell className="reviews__table-cell" align="center" padding="default">
-            Actions
-          </TableCell>
-        ) : null}
+
+        <TableCell className="reviews__table-cell" align="center" padding="default">
+          Actions
+        </TableCell>
       </TableRow>
     </TableHead>
   );
@@ -56,8 +75,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ReviewsTable({ data, headCells, actions }) {
+export default function ReviewsTable({ data, short, users }) {
   const classes = useStyles();
+  let history = useHistory();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -73,17 +93,43 @@ export default function ReviewsTable({ data, headCells, actions }) {
   const setRange = () => {
     if (data) {
       let array = [];
-      const count = Math.floor(data.length / 5);
+      const opt = short ? 3 : 5;
+      const count = Math.floor(data.length / opt);
 
       for (let index = 1; index < count + 1; index++) {
-        array.push(5 * index);
+        array.push(opt * index);
       }
       array.push(data.length);
       return array;
     }
   };
 
+  const joinData = () => {
+    const joinedData = data.map((item) => {
+      item.request.reviews.map(
+        (item) => (item.reviewer = users.find((user) => user.id === item.reviewerId)),
+      );
+      item.request.user = users.find((user) => user.id === item.request.userId);
+      return item;
+    });
+    return joinedData;
+  };
+
+  const isApprovedBy = (obj) => {
+    const { reviews } = obj.request;
+    const approved = reviews.reduce((sum, item) => {
+      if (item.isApproved) {
+        return `${sum} ${item.reviewer.firstName.concat(' ', item.reviewer.lastName)},`;
+      }
+    }, '');
+    return approved ? `Already approved by: ${approved}` : '';
+  };
+
   const emptyRows = data && rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+
+  useEffect(() => {
+    if (short) setRowsPerPage(3);
+  }, []);
 
   return (
     <div className={classes.root}>
@@ -94,9 +140,9 @@ export default function ReviewsTable({ data, headCells, actions }) {
             aria-labelledby="tableTitle"
             size={'medium'}
             aria-label="enhanced table">
-            <EnhancedTableHead headCells={headCells} actions={actions} />
+            <EnhancedTableHead headCells={short ? headCellsShort : headCells} />
             <TableBody>
-              {data
+              {joinData()
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((item, index) => {
                   const labelId = `enhanced-table-${index}`;
@@ -113,30 +159,38 @@ export default function ReviewsTable({ data, headCells, actions }) {
                         id={labelId}
                         scope="row"
                         padding="none">
-                        {item.firstName.concat(' ', item.lastName)}
+                        {item.request.user.firstName.concat(' ', item.request.user.lastName)}
                       </TableCell>
-                      <TableCell align="center">{item.role}</TableCell>
-                      <TableCell align="center">{item.type}</TableCell>
-                      <TableCell align="center">{item.dates}</TableCell>
-                      <TableCell align="center">{item.comments}</TableCell>
-                      <TableCell align="center">{item.details}</TableCell>
-                      {actions ? (
-                        <TableCell align="center">
-                          <Button
-                            className="users-table__ok-btn"
-                            variant="contained"
-                            style={{ marginRight: 10 }}
-                            onClick={() => {}}>
-                            Accept
-                          </Button>
-                          <Button
-                            className="users-table__cancel-btn"
-                            variant="contained"
-                            onClick={() => {}}>
-                            Reject
-                          </Button>
-                        </TableCell>
-                      ) : null}
+                      {short ? null : (
+                        <TableCell align="center">{item.request.user.role}</TableCell>
+                      )}
+                      <TableCell align="center">{types[item.request.typeId].title}</TableCell>
+                      <TableCell align="center">
+                        {convertDate(item.request.startDate)} - {convertDate(item.request.endDate)}
+                      </TableCell>
+                      <TableCell align="center">{item.request.comment}</TableCell>
+                      {short ? null : <TableCell align="center">{isApprovedBy(item)}</TableCell>}
+                      <TableCell align="center">
+                        <Button
+                          className="reviews-table__ok-btn"
+                          variant="contained"
+                          style={{ marginRight: 10 }}
+                          onClick={() => {
+                            history.push(
+                              `/other_requests/actions?review=${item.id}&action=approve`,
+                            );
+                          }}>
+                          Accept
+                        </Button>
+                        <Button
+                          className="reviews-table__cancel-btn"
+                          variant="contained"
+                          onClick={() => {
+                            history.push(`/other_requests/actions?review=${item.id}&action=reject`);
+                          }}>
+                          Reject
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   );
                 })}
@@ -148,7 +202,7 @@ export default function ReviewsTable({ data, headCells, actions }) {
             </TableBody>
           </Table>
           <TablePagination
-            rowsPerPageOptions={setRange()}
+            rowsPerPageOptions={short ? 3 : setRange()}
             component="div"
             count={data.length}
             rowsPerPage={rowsPerPage}

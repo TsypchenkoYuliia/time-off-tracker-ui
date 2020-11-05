@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { withStyles, Button } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -9,9 +9,10 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import { getMyRequests, getMyReviews } from '../components/Axios';
+import { getMyRequests, getMyReviews, getUsers } from '../components/Axios';
 import { Context } from '../Context';
 import NewRequest from './NewRequest';
+import ReviewsTable from '../components/OtherRequests/ReviewsTable';
 import { convertDate } from '../config';
 import { types, states } from '../constants';
 
@@ -38,67 +39,87 @@ const StyledTableRow = withStyles((theme) => ({
   },
 }))(TableRow);
 
-function createData(state, type, date, description) {
-  return { state, type, date, description };
-}
-
-const rows = [
-  createData(
-    'In progress',
-    'Paid Leave',
-    '10/10/2020 - 12/10/2020',
-    'Already approved by: Accounting',
-  ),
-  createData('Approved', 'Sick Leave', '10/10/2020 - 12/10/2020', ''),
-  createData('Rejected', 'Administrative Leave', '10/10/2020 - 12/10/2020', ''),
-];
-
 function Home() {
   const [isLoading, setLoading] = useState(true);
   const [isNewRequestOpen, setNewRequestState] = useState(false);
   const [requests, setRequests] = useState(null);
   const [reviews, setReviews] = useState(null);
+  const [users, setUsers] = useState(null);
 
   let history = useHistory();
   const [context, setContext] = useContext(Context);
 
-  // componentDidMount() {
-  //   //кооонечно же async/await
-  //   // const { isLoading } = this.state.isLoading;
-  //   // this.setState({ isLoading: true });
-  //   // axios.get
-  // }
-
   useEffect(() => {
     setLoading(true);
-    async function getRequests() {
-      await getMyRequests().then(({ data }) => {
-        const subData = data.slice(0, 3);
-        setRequests(subData);
-        if (context.role === 'Employee') {
-          setLoading(false);
-        }
-      });
-    }
-    getRequests();
+    getUsers('', '').then(({ data }) => {
+      setUsers(data);
+    });
 
-    if (context.role !== 'Employee') {
-      async function getReviews() {
-        await getMyReviews().then(({ data }) => {
-          const subData = data.filter((item) => item.isApproved === null);
-          setReviews(subData);
-        });
+    getMyRequests().then(({ data }) => {
+      const subData = data.slice(0, 3);
+      setRequests(subData);
+      if (context.role === 'Employee') {
         setLoading(false);
       }
-      getReviews();
+    });
+
+    if (context.role !== 'Employee') {
+      getMyReviews().then(({ data }) => {
+        const subData = data.filter((item) => item.isApproved === null);
+        setReviews(subData);
+      });
+      setLoading(false);
     }
+    // async function getRequests() {
+    //   await getMyRequests().then(({ data }) => {
+    //     const subData = data.slice(0, 3);
+    //     setRequests(subData);
+    //     if (context.role === 'Employee') {
+    //       setLoading(false);
+    //     }
+    //   });
+    // }
+    // getRequests();
+
+    // if (context.role !== 'Employee') {
+    //   async function getReviews() {
+    //     await getMyReviews().then(({ data }) => {
+    //       const subData = data.filter((item) => item.isApproved === null);
+    //       setReviews(subData);
+    //     });
+    //     setLoading(false);
+    //   }
+    //   getReviews();
+    // }
   }, []);
+
+  const joinData = (req) => {
+    const joinedData = req.map((item) => {
+      item.reviews.map(
+        (item) => (item.reviewer = users.find((user) => user.id === item.reviewerId)),
+      );
+      item.user = users.find((user) => user.id === item.userId);
+      return item;
+    });
+    return joinedData;
+  };
+
+  const isApprovedBy = (req) => {
+    const { reviews } = req;
+    const approved = reviews.reduce((sum, item) => {
+      if (item.isApproved) {
+        return `${sum} ${item.reviewer.firstName.concat(' ', item.reviewer.lastName)},`;
+      }
+      return sum;
+    }, '');
+    return approved ? `Already approved by: ${approved.slice(0, -1)}` : '';
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
-      <div style={{ flex: 1, margin: 5 }}>
+      <div style={{ flex: 0.7, margin: 5 }}>
         <div style={{ display: 'flex', flexDirection: 'row' }}>
-          <h2 style={{ marginBottom: 10 }}>My Recent Requests</h2>
+          <h2 style={{ marginBottom: 10, marginRight: 10 }}>My Recent Requests</h2>
 
           <Button
             variant="contained"
@@ -118,9 +139,9 @@ function Home() {
           </Button>
         </div>
 
-        {isLoading && !requests ? (
+        {requests === null && isLoading ? (
           <CircularProgress />
-        ) : requests.length > 0 ? (
+        ) : users && requests && requests.length > 0 ? (
           <TableContainer>
             <TableContainer>
               <TableHead>
@@ -138,7 +159,7 @@ function Home() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {requests.map((request) => {
+                {joinData(requests).map((request) => {
                   const startDate = convertDate(request.startDate);
                   const endDate = convertDate(request.endDate);
                   return (
@@ -150,7 +171,11 @@ function Home() {
                       <StyledTableCell align="center">
                         {startDate} - {endDate}
                       </StyledTableCell>
-                      <StyledTableCell align="left">{request.id}</StyledTableCell>
+                      <StyledTableCell align="left">
+                        {request.stateId === 4
+                          ? request.reviews.find((rev) => rev.isApproved === false).comment
+                          : isApprovedBy(request)}
+                      </StyledTableCell>
                     </StyledTableRow>
                   );
                 })}
@@ -170,47 +195,8 @@ function Home() {
             <h2 style={{ marginBottom: 10 }}>
               New Requests For Approval ({reviews && reviews.length})
             </h2>
-            {reviews.length > 0 ? (
-              <TableContainer>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <StyledTableCell style={{ minWidth: '110px', width: '120px' }} align="left">
-                        State
-                      </StyledTableCell>
-                      <StyledTableCell style={{ width: '180px' }} align="left">
-                        Type
-                      </StyledTableCell>
-                      <StyledTableCell style={{ width: '200px' }} align="left">
-                        Dates
-                      </StyledTableCell>
-                      <StyledTableCell align="left">State Details</StyledTableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {reviews.map((review) => {
-                      const { request } = review;
-                      const startDate = convertDate(request.startDate);
-                      const endDate = convertDate(request.endDate);
-
-                      return (
-                        <StyledTableRow key={review.id}>
-                          <StyledTableCell component="th" scope="row">
-                            {states[request.stateId]}
-                          </StyledTableCell>
-                          <StyledTableCell align="left">
-                            {types[request.typeId].title}
-                          </StyledTableCell>
-                          <StyledTableCell align="center">
-                            {startDate} - {endDate}
-                          </StyledTableCell>
-                          <StyledTableCell align="left">{request.comment}</StyledTableCell>
-                        </StyledTableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+            {users && reviews && reviews.length > 0 ? (
+              <ReviewsTable data={reviews} users={users} short />
             ) : (
               <h3>No reviews</h3>
             )}
@@ -227,4 +213,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default React.memo(Home);
