@@ -121,8 +121,9 @@ export default function ReviewsTable({ data, short, users }) {
       if (item.isApproved) {
         return `${sum} ${item.reviewer.firstName.concat(' ', item.reviewer.lastName)},`;
       }
+      return sum;
     }, '');
-    return approved ? `Already approved by: ${approved}` : '';
+    return approved ? `Already approved by: ${approved.slice(0, -1)}` : '';
   };
 
   const emptyRows = data && rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);

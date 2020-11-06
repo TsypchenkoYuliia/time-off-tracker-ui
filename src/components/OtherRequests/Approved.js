@@ -138,7 +138,7 @@ function Approved() {
         return `${sum} ${item.reviewer.firstName.concat(' ', item.reviewer.lastName)},`;
       }
     }, '');
-    return approved ? `Already approved by: ${approved}` : '';
+    return approved ? `Already approved by: ${approved.slice(0, -1)}` : '';
   };
 
   const getData = (data) => {
