@@ -55,7 +55,6 @@ function Login() {
       .post(url, { username: email, password: password })
       .then((response) => {
         const { data } = response;
-        console.log(response);
         localStorage.setItem('userId', data.userId);
         localStorage.setItem('role', data.role);
         localStorage.setItem('token', data.token);
@@ -74,12 +73,6 @@ function Login() {
   const handleClickShowPassword = () => {
     setPasswordVisibility(!showPassword);
   };
-
-  if (context.role) history.push('/');
-
-  useEffect(() => {
-    console.log(location);
-  }, []);
 
   return (
     <div>

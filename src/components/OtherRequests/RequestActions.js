@@ -50,7 +50,7 @@ function RequestActions() {
         <h3>Enter Reject Reason</h3>
         <LeaveComment disabled={isSendingRequest} comment={comment} changeComment={changeComment} />
         <Button
-          disabled={!isSendingRequest}
+          disabled={isSendingRequest}
           className="reviews-table__cancel-btn"
           variant="contained"
           style={{ marginRight: 10 }}

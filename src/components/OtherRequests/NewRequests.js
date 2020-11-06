@@ -6,12 +6,14 @@ import ReviewsFilter from './ReviewsFilter';
 import { loadData } from './LoadReviewsData';
 import { getMyReviewsByFilter } from '../Axios';
 import { types } from '../../constants';
+import { Users } from '../../Context';
 
 function NewRequests() {
   const [data, setData] = useState(null);
-  const [users, setUsers] = useState(null);
   const [isSendingRequest, setRequestSending] = useState(false);
   const [isLoading, setLoading] = useState(true);
+
+  const [users, setUsers] = React.useContext(Users);
 
   const handleSendRequest = async () => {
     setRequestSending(true);
@@ -26,10 +28,6 @@ function NewRequests() {
     });
   };
 
-  const getAllUsers = (data) => {
-    setUsers(data);
-  };
-
   const getData = (data) => {
     setData(data);
   };
@@ -40,8 +38,7 @@ function NewRequests() {
 
   useEffect(() => {
     setLoading(true);
-
-    loadData(getAllUsers, getData, uploaded, null);
+    loadData(getData, uploaded, null);
   }, []);
 
   return (
@@ -55,7 +52,7 @@ function NewRequests() {
       <div>
         {isLoading ? (
           <CircularProgress />
-        ) : data.length > 0 ? (
+        ) : users && data.length > 0 ? (
           <ReviewsTable data={data} users={users} />
         ) : (
           <h3>No data</h3>

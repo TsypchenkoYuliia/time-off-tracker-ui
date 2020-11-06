@@ -6,7 +6,7 @@ import User from './pages/User';
 import Login from './pages/Login';
 import Admin from './pages/Admin';
 
-import { Context } from './Context';
+import { Context, Users } from './Context';
 
 //only for external Header  user check
 const role = localStorage.getItem('role');
@@ -16,23 +16,26 @@ const user = localStorage.getItem('name');
 
 function App() {
   const [context, setContext] = useState({ userId, user, role, token });
+  const [users, setUsers] = useState(null);
   return (
-    <Context.Provider value={[context, setContext]}>
-      <div>
-        <Header />
-        <Switch>
-          <Route path="/login" exact>
-            <Login />
-          </Route>
-          <Route path="/admin" exact>
-            <Admin />
-          </Route>
-          <Route path="/">
-            <User />
-          </Route>
-        </Switch>
-      </div>
-    </Context.Provider>
+    <Users.Provider value={[users, setUsers]}>
+      <Context.Provider value={[context, setContext]}>
+        <div>
+          <Header />
+          <Switch>
+            <Route path="/login" exact>
+              <Login />
+            </Route>
+            <Route path="/admin" exact>
+              <Admin />
+            </Route>
+            <Route path="/">
+              <User />
+            </Route>
+          </Switch>
+        </div>
+      </Context.Provider>
+    </Users.Provider>
   );
 }
 
