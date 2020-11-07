@@ -5,7 +5,7 @@ import { Visibility, VisibilityOff } from '@material-ui/icons';
 import axios from 'axios';
 
 import { axiosApi } from '../config';
-import { Context } from '../Context';
+import { Users, Context } from '../Context';
 
 const emailRegex = RegExp(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/);
 
@@ -14,6 +14,7 @@ function Login() {
   let location = useLocation();
 
   const [context, setContext] = useContext(Context);
+  const [users, setUsers] = useContext(Users);
 
   const [email, setEmail] = useState('mainadmin@mail.ru'); //'mainadmin@mail.ru'
   const [password, setPassword] = useState('mainadmin89M#'); //'mainadmin89M#'
@@ -55,10 +56,12 @@ function Login() {
       .post(url, { username: email, password: password })
       .then((response) => {
         const { data } = response;
+        const user = users.find((user) => user.id === data.userId);
         localStorage.setItem('userId', data.userId);
         localStorage.setItem('role', data.role);
         localStorage.setItem('token', data.token);
-        setContext({ userId: data.userId, role: data.role, token: data.token });
+        localStorage.setItem('user', JSON.stringify(user));
+        setContext({ userId: data.userId, user: user, role: data.role, token: data.token });
         history.replace(
           location.state
             ? location.state.from.pathname + location.state.from.search

@@ -31,6 +31,19 @@ class Selectable extends React.Component {
       });
   };
 
+  eventStyleGetter = (event, start, end, isSelected) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const fullName = user.firstName.concat(' ', user.lastName);
+    if (event.title === fullName) {
+      let style = {
+        backgroundColor: 'green',
+      };
+      return {
+        style: style,
+      };
+    }
+  };
+
   render() {
     const { func } = this.props;
     return (
@@ -43,6 +56,7 @@ class Selectable extends React.Component {
           defaultDate={new Date()}
           onSelectEvent={(event) => alert(event.title)}
           onSelectSlot={({ start, end }) => func(start, end)}
+          eventPropGetter={this.eventStyleGetter}
         />
       </div>
     );

@@ -35,18 +35,7 @@ function Home() {
   useEffect(() => {
     async function getRequests() {
       await getMyRequests().then(({ data }) => {
-        const events = data.map((item) => {
-          return {
-            id: item.id,
-            title: types[item.typeId].title,
-            start: new Date(item.startDate),
-            end: new Date(item.endDate),
-          };
-        });
-        setEvents(events);
-
-        const subData = data.slice(0, 3);
-        setRequests(subData);
+        setRequests(data);
         if (context.role === 'Employee') {
           setLoading(false);
         }
@@ -65,6 +54,36 @@ function Home() {
       getReviews();
     }
   }, []);
+
+  useEffect(() => {
+    let ev;
+
+    if (users && requests) {
+      let events = requests.map((item) => {
+        const user = users.find((user) => user.id === item.userId);
+        return {
+          title: user.firstName.concat(' ', user.lastName),
+          start: new Date(item.startDate),
+          end: new Date(item.endDate),
+        };
+      });
+
+      if (reviews) {
+        const rew = reviews.map((item) => {
+          const user = users.find((user) => user.id === item.request.userId);
+          return {
+            title: user.firstName.concat(' ', user.lastName),
+            start: new Date(item.request.startDate),
+            end: new Date(item.request.endDate),
+          };
+        });
+
+        ev = events.concat(rew);
+      }
+
+      setEvents(ev);
+    }
+  }, [users, requests, reviews]);
 
   return (
     <div>
@@ -94,7 +113,7 @@ function Home() {
           {!users || !requests ? (
             <CircularProgress />
           ) : users && requests && requests.length > 0 ? (
-            <RequestTable data={requests} users={users} short />
+            <RequestTable data={requests.slice(0, 3)} users={users} short />
           ) : (
             <h3>No requests</h3>
           )}
