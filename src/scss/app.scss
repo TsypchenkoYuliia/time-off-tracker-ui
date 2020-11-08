@@ -1,0 +1,67 @@
+@import 'fonts';
+@import 'variables';
+@import 'libs/normalize';
+
+@import 'components/all';
+
+body {
+  background-color: $background;
+  padding: 0px;
+}
+
+.button {
+  border-radius: 0;
+  text-align: center;
+}
+
+.sidebar {
+  padding: 10px 0;
+  width: 170px;
+  min-width: 170px;
+  justify-content: center;
+  background-color: #f0f0f0;
+  height: 100%;
+}
+
+.filter {
+  flex-wrap: nowrap;
+}
+
+.statistics {
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.statistics__text {
+  flex: 1;
+  font-size: 16px;
+}
+
+.MuiInputBase-root {
+  font-family: 'Proxima Nova';
+  font-weight: normal;
+  font-style: normal;
+}
+
+.MuiFormLabel-root {
+  font-family: 'Proxima Nova';
+  font-weight: normal;
+  font-style: normal;
+}
+
+.MuiInputBase-input.MuiInput-input {
+  font-family: 'Proxima Nova';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+}
+
+.MuiFormLabel-root.MuiInputLabel-root {
+  font-family: 'Proxima Nova';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
