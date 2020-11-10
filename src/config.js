@@ -4,7 +4,7 @@ import * as tunnel from 'tunnel';
 
 const BASE_URL = 'http://trackerhost2020-001-site1.ftempurl.com/';
 
-const tunnel = tunnel.httpsOverHttp({
+const agent = tunnel.httpsOverHttp({
     proxy: {
         host: '5.39.200.88',
         port: 54987,
@@ -13,7 +13,7 @@ const tunnel = tunnel.httpsOverHttp({
 
 const axiosApi = axios.create({
     baseURL: BASE_URL,
-    httpsAgent: tunnel,
+    httpsAgent: agent,
     proxy:false
 });
 
