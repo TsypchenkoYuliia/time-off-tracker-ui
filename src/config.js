@@ -1,7 +1,7 @@
 import axios from 'axios';
 import moment from 'moment';
 
-const BASE_URL = 'https://localhost:44381/';
+const BASE_URL = 'http://trackerhost2020-001-site1.ftempurl.com/';
 
 const axiosApi = axios.create({
   baseURL: BASE_URL,
