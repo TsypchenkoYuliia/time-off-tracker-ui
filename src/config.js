@@ -1,10 +1,20 @@
 import axios from 'axios';
 import moment from 'moment';
+import * as tunnel from 'tunnel';
 
 const BASE_URL = 'http://trackerhost2020-001-site1.ftempurl.com/';
 
+const tunnel = tunnel.httpsOverHttp({
+    proxy: {
+        host: '5.39.200.88',
+        port: 54987,
+    },
+});
+
 const axiosApi = axios.create({
-  baseURL: BASE_URL,
+    baseURL: BASE_URL,
+    httpsAgent: tunnel,
+    proxy:false
 });
 
 axiosApi.interceptors.request.use((config) => {
